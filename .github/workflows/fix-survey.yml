@@ -1,0 +1,47 @@
+name: Fix survey progression
+on:
+  push:
+    branches: [main]
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Patch survey JavaScript
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old_show = '''function showStep(){questions.forEach(q=>q.classList.remove('active'));document.querySelector(`[data-step=\"${step}\"]`).classList.add('active');bar.style.width=`${(step/questions.length)*100}%`;progressText.textContent=`${step} / ${questions.length}`}'''
+          new_show = '''function showStep(){questions.forEach(q=>q.classList.remove('active'));const current=document.querySelector(`[data-step=\"${step}\"]`);if(current)current.classList.add('active');bar.style.width=`${(step/questions.length)*100}%`;progressText.textContent=`${step} / ${questions.length}`;prevQuestion.hidden=step<=1}'''
+          if old_show not in s:
+              raise SystemExit('showStep target not found')
+          s = s.replace(old_show, new_show, 1)
+          old_handler = '''document.querySelectorAll('.option').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll(`[data-step=\"${step}\"] .option`).forEach(btn=>btn.classList.remove('selected'));button.classList.add('selected');if(step<questions.length){step++;showStep()}else{showRecommendation();quiz.style.display='none';result.classList.add('is-visible');floating.classList.remove('show');result.scrollIntoView({behavior:'smooth',block:'start'})}}));'''
+          new_handler = '''document.querySelectorAll('.option').forEach(button=>button.addEventListener('click',(event)=>{event.preventDefault();const currentStep=Number(button.closest('.question')?.dataset.step||step);if(currentStep!==step)return;document.querySelectorAll(`[data-step=\"${step}\"] .option`).forEach(btn=>btn.classList.remove('selected'));button.classList.add('selected');if(step<questions.length){step+=1;showStep();track('quiz_next',{step});}else{showRecommendation();quiz.style.display='none';result.classList.add('is-visible');floating.classList.remove('show');result.scrollIntoView({behavior:'smooth',block:'start');}}}));'''
+          if old_handler not in s:
+              raise SystemExit('option handler target not found')
+          s = s.replace(old_handler, new_handler, 1)
+          p.write_text(s, encoding='utf-8')
+      - name: Commit and remove workflow
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "fix: restore survey progression"
+            git push origin main
+          fi
+          rm -f .github/workflows/fix-survey.yml
+          git add .github/workflows/fix-survey.yml
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: remove one-time survey fix workflow"
+            git push origin main
+          fi
