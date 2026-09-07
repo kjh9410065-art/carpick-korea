@@ -4,7 +4,60 @@ on:
     branches:
       - main
 jobs:
-  test:
+  fix:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - run: echo workflow-ok
+      - uses: actions/checkout@v4
+      - name: Patch survey script
+        shell: bash
+        run: |
+          cat > /tmp/quiz-script.txt <<'EOF'
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+const questions=Array.from(document.querySelectorAll('.question'));
+const options=Array.from(document.querySelectorAll('.option'));
+const quiz=document.getElementById('quiz');
+const result=document.getElementById('result');
+const bar=document.getElementById('bar');
+const progressText=document.getElementById('progressText');
+const prevQuestion=document.getElementById('prevQuestion');
+let step=1;
+const recommendations=[
+{name:'카슐랭',url:'https://replyalba.co.kr/pt/wRlNHpkuCa',baseApproval:83.40,target:[2,1,2,2],weights:[2,1,1,2],text:'초기 비용과 관리 부담을 함께 줄이고 싶은 조건을 중심으로 상담을 비교해보기 좋은 경로예요.'},
+{name:'카슐랭 2',url:'https://replyalba.co.kr/pt/ISJ7VX4MI6',baseApproval:78.39,target:[1,2,1,1],weights:[1,2,1,1],text:'이용 기간과 월 비용을 함께 고려해 상담 조건을 비교해보기 좋은 경로예요.'},
+{name:'리스렌트 성지',url:'https://replyalba.co.kr/pt/RP3eFQzsha',baseApproval:66.81,target:[1,1,2,1],weights:[1,1,2,1],text:'차량 관리 부담을 줄이고 싶은 조건을 중심으로 상담 경로를 비교해보기 좋아요.'},
+{name:'원픽 장기렌트카',url:'https://replyalba.co.kr/pt/EBGJfHRjy9',baseApproval:62.50,target:[2,1,1,2],weights:[2,1,1,2],text:'초기 비용과 월 이용 조건을 함께 고려해 상담 경로를 비교해볼 수 있어요.'},
+{name:'차드림',url:'https://replyalba.co.kr/pt/OjNhqGkzan',baseApproval:50.54,target:[0,2,0,0],weights:[1,2,1,1],text:'장기간 이용하고 직접 관리하는 조건을 고려해 상담 경로를 확인해볼 수 있어요.'},
+{name:'아이엠카 신차장기렌트카',url:'https://replyalba.co.kr/pt/N9FCsyajBj',baseApproval:47.44,target:[1,1,2,0],weights:[1,1,2,1],text:'관리 부담과 이용 조건을 함께 고려해 상담 경로를 확인해볼 수 있어요.'}];
+function getAnswers(){return questions.map(function(q){const x=q.querySelector('.option.selected');return x?Number(x.dataset.score):0;});}
+function ranked(){const a=getAnswers();return recommendations.map(function(item){const diff=a.reduce(function(sum,v,i){return sum+Math.abs(v-item.target[i])*item.weights[i];},0);const match=Math.max(40,Math.min(100,100-diff*8));return Object.assign({},item,{match:match,route:match*1000+item.baseApproval});}).sort(function(a,b){return b.route-a.route;});}
+function showStep(){questions.forEach(function(q){q.classList.remove('active');});const current=questions[step-1];if(!current)return;current.classList.add('active');if(bar)bar.style.width=(step/questions.length*100)+'%';if(progressText)progressText.textContent=step+' / '+questions.length;if(prevQuestion)prevQuestion.hidden=step<=1;}
+function showRecommendation(){const list=ranked(),item=list[0];document.getElementById('recommendTitle').textContent=item.name;document.getElementById('recommendText').textContent=item.text;document.getElementById('matchPercent').textContent=item.match+'점';document.getElementById('matchFill').style.width=item.match+'%';const cta=document.getElementById('recommendCta');cta.href=item.url;cta.textContent=item.name+' 상담 조건 확인하기 →';}
+options.forEach(function(button){button.type='button';button.addEventListener('click',function(){const current=questions[step-1];if(!current)return;current.querySelectorAll('.option').forEach(function(x){x.classList.remove('selected');});button.classList.add('selected');if(step<questions.length){step+=1;showStep();}else{showRecommendation();quiz.style.display='none';result.classList.add('is-visible');result.style.display='block';result.scrollIntoView({behavior:'smooth',block:'start'});}});});
+if(prevQuestion){prevQuestion.type='button';prevQuestion.addEventListener('click',function(){if(step>1){step-=1;showStep();}});}
+const restart=document.getElementById('restart');if(restart){restart.type='button';restart.addEventListener('click',function(){step=1;options.forEach(function(x){x.classList.remove('selected');});result.classList.remove('is-visible');result.style.display='none';quiz.style.display='block';showStep();quiz.scrollIntoView({behavior:'smooth',block:'start'});});}
+showStep();
+});
+</script>
+EOF
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          start=s.find('<script>\nlet step=1;')
+          end=s.find('</script>',start)
+          if start < 0 or end < 0:
+              raise SystemExit('quiz script not found')
+          new=Path('/tmp/quiz-script.txt').read_text(encoding='utf-8').rstrip('\n')
+          p.write_text(s[:start]+new+s[end+9:],encoding='utf-8')
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'fix: restore survey progression'
+          git push
