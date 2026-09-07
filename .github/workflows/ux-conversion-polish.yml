@@ -1,6 +1,7 @@
 name: Apply conversion UX polish
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   patch:
@@ -34,7 +35,6 @@ jobs:
           # 모바일 CTA를 화면에서 쉽게 누를 수 있도록 최소 높이를 보장합니다.
           s = s.replace('.cta{display:block;margin-top:15px;', '.cta{display:flex;align-items:center;justify-content:center;min-height:54px;margin-top:15px;', 1)
 
-          # 모바일 결과 영역에서도 추가된 신뢰 문구가 충분한 여백을 갖도록 합니다.
           p.write_text(s, encoding='utf-8')
       - name: Commit changes
         run: |
