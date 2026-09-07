@@ -1,0 +1,162 @@
+name: Fix quiz progression
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Replace quiz script
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          new_script = r'''<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  // 설문에 필요한 DOM 요소를 모두 가져옵니다.
+  const questions=[...document.querySelectorAll('.question')];
+  const options=[...document.querySelectorAll('.option')];
+  const quiz=document.getElementById('quiz');
+  const result=document.getElementById('result');
+  const bar=document.getElementById('bar');
+  const progressText=document.getElementById('progressText');
+  const prevQuestion=document.getElementById('prevQuestion');
+  const floating=document.getElementById('floatingQuizCta');
+  let step=1;
+
+  // 기존 추천 데이터가 있으면 그대로 사용하고, 없으면 기본 데이터를 사용합니다.
+  const recommendations=[
+    {name:"카슐랭",url:"https://replyalba.co.kr/pt/wRlNHpkuCa",baseApproval:83.40,target:[2,1,2,2],weights:[2,1,1,2],text:"초기 비용과 관리 부담을 함께 줄이고 싶은 조건을 중심으로 상담을 비교해보기 좋은 경로예요."},
+    {name:"카슐랭 2",url:"https://replyalba.co.kr/pt/ISJ7VX4MI6",baseApproval:78.39,target:[1,2,1,1],weights:[1,2,1,1],text:"이용 기간과 월 비용을 함께 고려해 상담 조건을 비교해보기 좋은 경로예요."},
+    {name:"리스렌트 성지",url:"https://replyalba.co.kr/pt/RP3eFQzsha",baseApproval:66.81,target:[1,1,2,1],weights:[1,1,2,1],text:"차량 관리 부담을 줄이고 싶은 조건을 중심으로 상담 경로를 비교해보기 좋아요."},
+    {name:"원픽 장기렌트카",url:"https://replyalba.co.kr/pt/EBGJfHRjy9",baseApproval:62.50,target:[2,1,1,2],weights:[2,1,1,2],text:"초기 비용과 월 이용 조건을 함께 고려해 상담 경로를 비교해볼 수 있어요."},
+    {name:"차드림",url:"https://replyalba.co.kr/pt/OjNhqGkzan",baseApproval:50.54,target:[0,2,0,0],weights:[1,2,1,1],text:"장기간 이용하고 직접 관리하는 조건을 고려해 상담 경로를 확인해볼 수 있어요."},
+    {name:"아이엠카 신차장기렌트카",url:"https://replyalba.co.kr/pt/N9FCsyajBj",baseApproval:47.44,target:[1,1,2,0],weights:[1,1,2,1],text:"관리 부담과 이용 조건을 함께 고려해 상담 경로를 확인해볼 수 있어요."}
+  ];
+
+  // 답변은 각 질문의 선택 상태를 직접 읽어 순서를 보존합니다.
+  function getAnswers(){
+    return questions.map(q=>{
+      const selected=q.querySelector('.option.selected');
+      return selected ? Number(selected.dataset.score) : 0;
+    });
+  }
+
+  // 선택 조건과 업체별 내부 기준을 비교해 추천 순서를 계산합니다.
+  function ranked(){
+    const answers=getAnswers();
+    return recommendations.map(item=>{
+      const diff=answers.reduce((sum,a,i)=>sum+Math.abs(a-item.target[i])*item.weights[i],0);
+      const match=Math.max(40,Math.min(100,100-diff*8));
+      return {...item,match,route:match*1000+item.baseApproval};
+    }).sort((a,b)=>b.route-a.route);
+  }
+
+  // 현재 질문만 표시하고 진행률과 이전 질문 버튼 상태를 갱신합니다.
+  function showStep(){
+    questions.forEach(q=>q.classList.remove('active'));
+    const current=questions[step-1];
+    if(!current)return;
+    current.classList.add('active');
+    const percent=(step/questions.length)*100;
+    if(bar)bar.style.width=percent+'%';
+    if(progressText)progressText.textContent=step+' / '+questions.length;
+    if(prevQuestion)prevQuestion.hidden=step<=1;
+  }
+
+  // 설문 완료 후 추천 결과를 화면에 채웁니다.
+  function showRecommendation(){
+    const list=ranked();
+    const item=list[0];
+    document.getElementById('recommendTitle').textContent=item.name;
+    document.getElementById('recommendText').textContent=item.text;
+    document.getElementById('matchPercent').textContent=item.match+'점';
+    document.getElementById('matchFill').style.width=item.match+'%';
+    const cta=document.getElementById('recommendCta');
+    cta.href=item.url;
+    cta.textContent=item.name+' 상담 조건 확인하기 →';
+    const partnerList=document.querySelector('.partner-list');
+    if(partnerList){
+      partnerList.innerHTML=list.slice(1).map(p=>`<a class="partner-card" href="${p.url}" target="_blank" rel="noopener noreferrer"><span><strong>${p.name}</strong><div class="partner-match"><div class="partner-match-top"><span>추천 점수</span><strong>${p.match}점</strong></div><div class="partner-match-track"><div class="partner-match-fill" style="width:${p.match}%"></div></div></div></span><b>→</b></a>`).join('');
+    }
+  }
+
+  // 답변 버튼: 선택 표시 → 다음 질문으로 이동합니다.
+  options.forEach(button=>button.addEventListener('click',()=>{
+    const current=questions[step-1];
+    if(!current)return;
+    current.querySelectorAll('.option').forEach(btn=>btn.classList.remove('selected'));
+    button.classList.add('selected');
+    if(step<questions.length){
+      step+=1;
+      showStep();
+    }else{
+      showRecommendation();
+      quiz.style.display='none';
+      result.classList.add('is-visible');
+      if(floating)floating.classList.remove('show');
+      result.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }));
+
+  // 이전 질문 버튼으로 한 단계 되돌아갑니다.
+  if(prevQuestion){
+    prevQuestion.addEventListener('click',()=>{
+      if(step<=1)return;
+      step-=1;
+      showStep();
+    });
+  }
+
+  // 다시 시작하면 모든 선택을 초기화합니다.
+  const restart=document.getElementById('restart');
+  if(restart){
+    restart.addEventListener('click',()=>{
+      step=1;
+      options.forEach(x=>x.classList.remove('selected'));
+      result.classList.remove('is-visible');
+      result.style.display='';
+      quiz.style.display='block';
+      showStep();
+      quiz.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  }
+
+  // 분석 이벤트는 연결되어 있을 때만 기록합니다.
+  function track(name,params={}){window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:name,...params});}
+  const cta=document.getElementById('recommendCta');
+  if(cta)cta.addEventListener('click',()=>track('recommend_cta_click'));
+  track('page_ready');
+
+  // 페이지 최초 진입 시 1번 질문을 확실히 표시합니다.
+  showStep();
+});
+</script>'''
+          s2 = re.sub(r'<script>\s*let step=1;.*?</script>', new_script, s, count=1, flags=re.S)
+          if s2 == s:
+              raise SystemExit('quiz script block not found')
+          p.write_text(s2, encoding='utf-8')
+          PY
+
+      - name: Commit fix and remove workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/fix-quiz.yml
+          git commit -m "fix: restore survey progression"
+          git push
+          git rm .github/workflows/fix-quiz.yml
+          git commit -m "chore: remove one-time quiz fix workflow"
+          git push
