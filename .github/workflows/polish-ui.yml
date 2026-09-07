@@ -1,0 +1,95 @@
+name: Polish UI
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Apply 0.00.31 UI polish
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+          marker = '/* 0.00.31-ui-polish */'
+          if marker in text:
+              print('0.00.31 already applied')
+              raise SystemExit(0)
+
+          style = r'''
+          
+          /* 0.00.31-ui-polish: 기존 콘텐츠는 유지하고 사용성·가독성만 강화한다. */
+          html{scroll-behavior:smooth}
+          #quiz,#faq-title,#info-title{scroll-margin-top:28px}
+          button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #9c8cf2;outline-offset:3px}
+          .option{transform:translateY(0);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease}
+          .option:hover{transform:translateY(-2px)}
+          .option.selected{transform:translateY(-1px);box-shadow:0 10px 28px rgba(117,103,232,.12)}
+          .cta,.hero-start,.bottom-cta{transition:transform .18s ease,box-shadow .18s ease}
+          .cta:hover,.hero-start:hover,.bottom-cta:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(117,103,232,.20)}
+          .bottom-cta{position:relative;overflow:hidden;justify-content:flex-start;text-align:left}
+          .bottom-cta:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(117,103,232,.08),transparent 55%);pointer-events:none}
+          .bottom-cta>span{margin-left:auto;white-space:nowrap}
+          .faq-item[open]{background:#fff;box-shadow:0 10px 28px rgba(44,34,92,.06)}
+          .faq-item summary{transition:color .18s ease,background .18s ease}
+          .faq-item summary:hover{color:#7567e8;background:#faf9ff}
+          .partner-card{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+          .partner-card:hover{transform:translateY(-2px);border-color:#cfc6ff;box-shadow:0 10px 24px rgba(44,34,92,.07)}
+          .seo-grid article{transition:transform .18s ease,box-shadow .18s ease}
+          .seo-grid article:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(44,34,92,.06)}
+          @media (min-width:768px){
+            .top{overflow:visible}
+            .hero{position:relative}
+            .hero:after{content:"";position:absolute;left:22px;right:22px;bottom:-10px;height:18px;border-radius:50%;background:rgba(34,20,90,.08);filter:blur(14px);z-index:-1}
+            .question h2{max-width:760px}
+            .faq-section{box-shadow:0 12px 34px rgba(43,35,90,.05)}
+          }
+          @media (prefers-reduced-motion:reduce){
+            html{scroll-behavior:auto}
+            *,*::before,*::after{transition:none!important;animation:none!important}
+          }
+          @media (max-width:767px){
+            .bottom-cta{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+            .bottom-cta-icon{width:34px;height:34px;border-radius:11px;background:#eeeaff;display:grid;place-items:center;color:#7567e8;font-weight:900}
+            .bottom-cta strong{font-size:13px}
+            .bottom-cta p{margin:3px 0 0!important;font-size:11px!important;line-height:1.4!important}
+          }
+          @media (min-width:768px){
+            .bottom-cta{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:22px 24px}
+            .bottom-cta-icon{width:42px;height:42px;border-radius:14px;background:#eeeaff;display:grid;place-items:center;color:#7567e8;font-weight:900}
+            .bottom-cta strong{font-size:15px}
+            .bottom-cta p{margin:4px 0 0;color:#777;font-size:12px}
+            .bottom-cta>span{font-size:14px}
+          }
+          '''
+          end = text.rfind('</style>')
+          if end < 0:
+              raise SystemExit('</style> not found')
+          text = text[:end] + style + '\n' + marker + '\n' + text[end:]
+
+          # 결과 영역이 실제로 보여질 때 스크린리더가 변화를 인지하도록 보강한다.
+          text = text.replace('<section id="result">', '<section id="result" aria-live="polite">', 1)
+          text = text.replace('<span id="progressText">1 / 4</span>', '<span id="progressText" aria-live="polite">1 / 4</span>', 1)
+          p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit generated polish
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'feat: polish UI accessibility and interactions'
+          git push
