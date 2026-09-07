@@ -1,1 +1,0 @@
-Google Analytics 4 연결 시 측정 ID를 index.html에 추가하면 됩니다.
