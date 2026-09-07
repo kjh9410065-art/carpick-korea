@@ -1,0 +1,66 @@
+name: Patch result conversion UX
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  patch:
+    if: github.event_name == 'push' && !contains(github.event.head_commit.message, 'result conversion UX patch')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Patch result conversion UX
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          old='''<div class="recommend-box">'''
+          new='''<div class="recommend-box">'''
+          # 결과 추천 카드 안에 상담 전 확인 포인트를 추가해 CTA의 이유를 강화한다.
+          if '상담 전에 확인할 것' not in s:
+              marker='''<a class="cta"'''
+              insert='''<div class="consult-check"><strong>상담 전에 확인할 것</strong><span>차량 이용 기간 · 초기 비용 부담 · 월 이용료 조건</span></div>\n              '''
+              s=s.replace(marker, insert+marker, 1)
+          # 결과 CTA 주변의 행동 유도 문구를 추가한다.
+          marker='''<a class="cta"'''
+          if '조건에 맞는 상담 경로를 확인해보세요' not in s:
+              s=s.replace(marker, '''<p class="cta-lead">조건에 맞는 상담 경로를 확인해보세요.</p>\n              '''+marker, 1)
+          # 결과 화면에서 무료 진단의 성격을 다시 보여주는 신뢰 스트립을 추가한다.
+          marker='''<button class="restart"'''
+          if 'result-trust' not in s:
+              insert='''<div class="result-trust"><span><b>무료</b>진단 비용 없음</span><span><b>4문항</b>간단한 조건 확인</span><span><b>비교</b>차량 이용 방식 중심</span></div>\n              '''
+              s=s.replace(marker, insert+marker, 1)
+          # 결과 영역용 스타일을 추가한다.
+          style_marker='''#result{display:none;max-width:900px;margin:28px auto 0}'''
+          styles='''\n.cta-lead{margin:18px 0 0;text-align:center;color:#555;font-size:13px;font-weight:800}.consult-check{margin-top:12px;padding:13px 14px;border-radius:14px;background:#fff;border:1px solid #ebe7f5;font-size:11px;line-height:1.55;color:#777}.consult-check strong{display:block;color:#4e4858;margin-bottom:3px;font-size:12px}.consult-check span{display:block}.result-trust{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:2px}.result-trust span{padding:12px 7px;border:1px solid #ece9f3;border-radius:14px;background:#fff;text-align:center;color:#888;font-size:10px;line-height:1.4}.result-trust b{display:block;color:#7567e8;font-size:14px;margin-bottom:2px}\n'''
+          if 'result-trust' not in s[:s.find(style_marker)]:
+              s=s.replace(style_marker, styles+style_marker, 1)
+          p.write_text(s)
+          PY
+      - name: Add FAQ
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html'); s=p.read_text()
+          if '자주 묻는 질문' not in s:
+              marker='''<div class="bottom-cta"'''
+              faq='''<section class="faq-section"><h2>자주 묻는 질문</h2><details><summary>진단 결과가 실제 승인이나 견적을 보장하나요?</summary><p>아니요. 진단 결과는 입력한 조건을 바탕으로 차량 이용 방식을 비교하기 위한 참고 정보입니다. 실제 상담과 계약 조건은 상담 과정에서 확인해야 합니다.</p></details><details><summary>진단 비용이 있나요?</summary><p>카픽코리아의 진단 자체에는 별도의 진단 비용이 없습니다.</p></details><details><summary>장기렌터카와 리스 중 무엇이 더 좋은가요?</summary><p>개인의 이용 기간, 비용 부담 방식, 차량 관리 선호 등에 따라 달라질 수 있습니다. 어느 한쪽이 항상 유리한 것은 아닙니다.</p></details><details><summary>상담 신청 후에는 어떻게 진행되나요?</summary><p>선택한 상담 경로를 통해 실제 상담 절차가 진행됩니다. 구체적인 상담 방식과 조건은 해당 상담 업체에서 안내받을 수 있습니다.</p></details></section>\n              '''
+              s=s.replace(marker, faq+marker, 1)
+              css='''.faq-section{margin-top:32px;padding:24px;border:1px solid #e9e6f2;border-radius:22px;background:#fff}.faq-section h2{margin:0 0 12px;font-size:20px}.faq-section details{border-top:1px solid #eeeaf3;padding:14px 0}.faq-section details:first-of-type{border-top:0}.faq-section summary{cursor:pointer;font-size:13px;font-weight:800;color:#34313d}.faq-section p{margin:9px 0 0;color:#777;font-size:12px;line-height:1.7}\n'''
+              s=s.replace('</style>',css+'</style>',1)
+          p.write_text(s)
+          PY
+      - name: Remove one-time workflow
+        run: rm -f .github/workflows/patch-result-conversion.yml
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/patch-result-conversion.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: result conversion UX patch"
+          git push
