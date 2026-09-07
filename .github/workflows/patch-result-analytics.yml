@@ -6,7 +6,7 @@ permissions:
   contents: write
 jobs:
   patch:
-    if: github.event.head_commit.message != 'Patch result conversion UX and analytics hooks'
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +20,6 @@ jobs:
             '.partner-card{padding:16px 18px;border:1px solid #e8e6f4;border-radius:18px;background:#fff;color:#222;display:flex;justify-content:space-between;gap:10px;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}':'.partner-card{padding:16px 18px;border:1px solid #e8e6f4;border-radius:18px;background:#fff;color:#222;display:block;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}.partner-card>span{display:block;width:100%}',
             '.partner-match{margin-top:10px}.partner-match-top':'.partner-match{width:100%;margin-top:10px}.partner-match-top',
             '#result{display:none;max-width:900px;margin:28px auto 0}#result.is-visible{display:block}': '#result{display:none;max-width:900px;margin:28px auto 0}#result.is-visible{display:flex;flex-direction:column}#result .result-head{order:1}#result .recommend-box{order:2}#result .reason{order:3}#result .result-confidence{order:4}#result .other-partners{order:5}#result .notice{order:6}#result .result-trust{order:7}#result .restart{order:8}#result .tip{order:9}',
-            '#result.is-visible{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 20px;padding-top:35px}': '#result.is-visible{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 20px;padding-top:35px}',
             '<h2>장기렌트·리스 조건도<br>함께 비교해보세요.</h2>':'<h2>선택한 조건에서 먼저<br>확인할 상담 경로입니다.</h2>',
             '<p>선택한 답변을 기준으로 차량을 바로 구매하기 전에<br>다른 이용 방법의 조건도 확인해볼 만해요.</p>':'<p>선택한 답변을 기준으로 내부 매칭 기준을 적용해<br>먼저 비교할 상담 경로를 정리했습니다.</p>',
             '<div class="recommend-label">가장 추천하는 상담</div>':'<div class="recommend-label">조건에 따른 우선 상담 경로</div>',
