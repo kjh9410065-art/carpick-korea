@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://carpick-korea.carpick.workers.dev/sitemap.xml
