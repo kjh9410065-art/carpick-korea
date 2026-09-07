@@ -5,7 +5,7 @@
     <meta name="robots" content="index,follow">
     <meta name="google-site-verification" content="GONO5kQ8pBqmduMOXxHRWTXOdRBz0V7rct3MIJpYm4k" />
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#7567e8">
 <meta name="keywords" content="카픽코리아, 카픽 코리아, 카픽, 자동차 장기렌트, 장기렌터카, 자동차 리스, 장기렌트 추천, 자동차 리스 추천">
 <meta name="description" content="카픽코리아에서 4가지 질문으로 나에게 맞는 자동차 장기렌트와 자동차 리스를 비교하고 차량 이용 방법을 추천받아보세요.">
@@ -81,6 +81,18 @@ footer{padding:24px;background:#faf9fc;color:#aaa6b1;text-align:center;font-size
 /* ===== 0.00.28 시각적 완성도 및 설문 전환 강화 ===== */
 .top{position:relative;isolation:isolate;overflow:hidden}.top:before,.top:after{content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:-1}.top:before{width:420px;height:420px;right:-130px;top:-180px;background:rgba(255,255,255,.10)}.top:after{width:280px;height:280px;left:48%;bottom:-190px;background:rgba(255,255,255,.07)}
 
+
+
+/* 0.00.29 desktop-fixed */
+@media (min-width:768px){
+  html,body{min-width:980px;overflow-x:auto}
+  .app{
+    /* PC UI 고정 폭: 브라우저 창을 좁혀도 카드·글자 크기를 줄이지 않는다. */
+    width:1320px;
+    min-width:980px;
+    max-width:none;
+  }
+}
 </style>
 </head>
 <body>
