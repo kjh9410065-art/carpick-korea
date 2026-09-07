@@ -1,0 +1,69 @@
+name: Apply desktop UI fix
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Apply 0.00.29 desktop sizing fix
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("index.html")
+          text = path.read_text(encoding="utf-8")
+          marker = "/* 0.00.29 desktop-fixed */"
+
+          if marker in text:
+              print("0.00.29 fix already applied.")
+              raise SystemExit(0)
+
+          # 모바일 접근성을 위해 브라우저 확대를 막는 maximum-scale 제한을 제거한다.
+          text = text.replace(
+              'content="width=device-width,initial-scale=1,maximum-scale=1"',
+              'content="width=device-width,initial-scale=1"'
+          )
+
+          # PC 창이 좁아져도 UI 자체는 축소하지 않고 1320px 작업 폭을 유지한다.
+          css = '''
+
+          /* 0.00.29 desktop-fixed */
+          @media (min-width:768px){
+            html,body{min-width:980px;overflow-x:auto}
+            .app{
+              /* PC UI 고정 폭: 브라우저 창을 좁혀도 카드·글자 크기를 줄이지 않는다. */
+              width:1320px;
+              min-width:980px;
+              max-width:none;
+            }
+          }
+          '''
+
+          style_end = text.rfind('</style>')
+          if style_end == -1:
+              raise SystemExit("</style> not found")
+          text = text[:style_end] + css + text[style_end:]
+          path.write_text(text, encoding="utf-8")
+          print("0.00.29 desktop sizing fix applied.")
+          PY
+
+      - name: Commit generated fix
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "fix: keep desktop UI fixed size"
+          git push
