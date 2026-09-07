@@ -142,6 +142,23 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #9c
 
 /* 0.00.32 guide link polish */
 @media (min-width:768px){main section[aria-labelledby="guide-title"]{box-shadow:0 12px 30px rgba(43,35,90,.04)}}
+
+
+/* 0.00.33-final-review: 하단 CTA 가독성·클릭성 및 결과 재시작 버그 수정 */
+.bottom-cta{color:#fff;cursor:pointer;position:relative;z-index:1}
+.bottom-cta strong,.bottom-cta p,.bottom-cta>span{position:relative;z-index:1}
+.bottom-cta strong{color:#fff}
+.bottom-cta p{color:rgba(255,255,255,.78)!important}
+.bottom-cta>span{color:#fff}
+.bottom-cta:hover{color:#fff}
+@media (max-width:767px){
+  .bottom-cta{min-height:72px}
+  .bottom-cta>span{font-size:11px;letter-spacing:-.3px}
+}
+@media (min-width:768px){
+  .bottom-cta{min-height:86px}
+}
+/* 0.00.33-final-review */
 </style>
 </head>
 <body>
@@ -160,7 +177,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #9c
 <section class="seo-info" aria-labelledby="info-title"><h2 id="info-title">차량 구매 전 알아볼 장기렌트·리스</h2><p>차량을 이용하는 방법은 직접 구매 외에도 장기렌트와 리스처럼 계약 기간 동안 차량을 이용하는 방식이 있습니다. 어떤 방식이 적합한지는 이용 기간, 초기 비용 부담, 차량 관리 방식 등 개인의 상황에 따라 달라질 수 있습니다.</p><div class="seo-grid"><article><h3>장기렌트</h3><p>계약 기간 동안 차량을 이용하고 계약 조건에 따라 차량 관리와 관련된 서비스가 포함될 수 있습니다. 세부 조건은 상품과 계약에 따라 확인해야 합니다.</p></article><article><h3>자동차 리스</h3><p>금융사 또는 리스사의 차량을 일정 기간 이용하는 방식입니다. 계약 기간, 보증금·선납금, 만기 조건 등 세부 내용을 확인하는 것이 중요합니다.</p></article><article><h3>무엇을 비교할까?</h3><p>월 이용료만 보지 말고 계약 기간, 초기 비용, 만기 조건, 관리 범위 등 전체 계약 조건을 함께 비교하는 것이 좋습니다.</p></article></div></section>
 <section aria-labelledby="guide-title" style="margin-top:28px;padding:22px;border-radius:24px;background:#f7f6ff;"><h2 id="guide-title" style="margin:0 0 8px;font-size:22px;">차량 이용 방법 알아보기</h2><p style="margin:0 0 16px;color:#666;line-height:1.65;">차량 구매, 장기렌트, 리스의 차이와 계약 전에 확인할 내용을 간단하게 정리했습니다.</p><div style="display:grid;gap:10px;"><a href="long-term-rental-vs-lease.html" style="padding:15px 16px;background:#fff;border-radius:16px;text-decoration:none;color:#222;font-weight:700;">장기렌터카 vs 자동차 리스, 무엇이 다를까 →</a><a href="car-purchase-vs-rental.html" style="padding:15px 16px;background:#fff;border-radius:16px;text-decoration:none;color:#222;font-weight:700;">차량 구매와 장기렌트 비교하기 →</a><a href="long-term-rental-guide.html" style="padding:15px 16px;background:#fff;border-radius:16px;text-decoration:none;color:#222;font-weight:700;">장기렌터카 계약 전 확인할 것 →</a><a href="car-lease-guide.html" style="padding:15px 16px;background:#fff;border-radius:16px;text-decoration:none;color:#222;font-weight:700;">자동차 리스 계약 전 확인할 것 →</a><a href="long-term-rental-cost-guide.html" style="padding:15px 16px;background:#fff;border-radius:16px;text-decoration:none;color:#222;font-weight:700;">장기렌터카 비용 비교할 때 확인할 것 →</a><a href="car-buying-checklist.html" style="padding:15px 16px;background:#fff;border-radius:16px;text-decoration:none;color:#222;font-weight:700;">자동차 구매 전 체크리스트 →</a><a href="lease-contract-checklist.html" style="padding:15px 16px;background:#fff;border-radius:16px;text-decoration:none;color:#222;font-weight:700;">자동차 리스 계약 체크리스트 →</a></div></section>
 <section class="faq-section" aria-labelledby="faq-title"><h2 id="faq-title">차량 장기렌트·리스 자주 묻는 질문</h2><p>상담을 누르기 전에 많이 확인하는 내용을 간단하게 정리했습니다.</p><div class="faq-list"><details class="faq-item"><summary>장기렌트와 리스 중 무엇이 더 좋은가요?</summary><p>어떤 방식이 무조건 더 좋다고 정해져 있지는 않습니다. 이용 기간, 초기 비용 부담, 차량 관리 방식, 계약 종료 후 조건 등을 함께 비교해보는 것이 좋습니다.</p></details><details class="faq-item"><summary>카픽의 추천 점수는 실제 승인 가능성인가요?</summary><p>아니요. 추천 점수는 입력한 답변을 기준으로 상담 경로를 우선 정리하기 위한 카픽의 내부 매칭 점수입니다. 실제 승인 여부는 제휴 업체와 리플알바의 심사 기준에 따라 달라질 수 있습니다.</p></details><details class="faq-item"><summary>상담을 신청하면 바로 계약해야 하나요?</summary><p>상담 경로를 확인하는 것과 실제 계약은 별개의 과정입니다. 구체적인 조건과 계약 가능 여부는 상담 과정에서 확인해주세요.</p></details><details class="faq-item"><summary>월 이용료만 보고 결정해도 될까요?</summary><p>월 비용뿐 아니라 계약 기간, 초기 비용, 만기 조건, 관리 범위 등 전체 조건을 함께 확인하는 편이 좋습니다.</p></details></div></section>
-<section class="bottom-cta" aria-label="차량 이용 방법 비교 안내"><div class="bottom-cta-icon">✦</div><div><strong>어떤 방식이 맞는지 아직 고민된다면</strong><p>몇 가지 질문만으로 현재 조건을 정리하고 비교를 시작해보세요.</p></div><span>30초 체크 →</span></section>
+<a class="bottom-cta" href="#quiz" aria-label="30초 차량 이용 진단으로 이동"><div class="bottom-cta-icon">✦</div><div><strong>어떤 방식이 맞는지 아직 고민된다면</strong><p>몇 가지 질문만으로 현재 조건을 정리하고 비교를 시작해보세요.</p></div><span>30초 체크 →</span></a>
 </main>
 <footer>카픽 CAR PICK<br>제휴 링크를 통해 상담이 진행될 수 있습니다.</footer></div>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"카픽코리아","url":"https://carpick-korea.carpick.workers.dev/","description":"차량 구매 전 장기렌트와 리스 등 차량 이용 방법을 비교해볼 수 있는 간단한 체크 서비스"}</script>
@@ -172,8 +189,8 @@ function ranked(){const answers=getAnswers();return recommendations.map(item=>{c
 const questions=document.querySelectorAll('.question'),bar=document.getElementById('bar'),progressText=document.getElementById('progressText'),quiz=document.getElementById('quiz'),result=document.getElementById('result');
 function showStep(){questions.forEach(q=>q.classList.remove('active'));document.querySelector(`[data-step="${step}"]`).classList.add('active');bar.style.width=`${(step/questions.length)*100}%`;progressText.textContent=`${step} / ${questions.length}`)}
 function showRecommendation(){const list=ranked(),item=list[0];document.getElementById('recommendTitle').textContent=item.name;document.getElementById('recommendText').textContent=item.text;document.getElementById('matchPercent').textContent=item.match+'점';document.getElementById('matchFill').style.width=item.match+'%';const cta=document.getElementById('recommendCta');cta.href=item.url;cta.textContent=item.name+' 상담 조건 확인하기 →';document.querySelector('.partner-list').innerHTML=list.slice(1).map(p=>`<a class="partner-card" href="${p.url}" target="_blank" rel="noopener noreferrer"><span><strong>${p.name}</strong><div class="partner-match"><div class="partner-match-top"><span>추천 점수</span><strong>${p.match}점</strong></div><div class="partner-match-track"><div class="partner-match-fill" style="width:${p.match}%"></div></div></div></span><b>→</b></a>`).join('')}
-document.querySelectorAll('.option').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll(`[data-step="${step}"] .option`).forEach(btn=>btn.classList.remove('selected'));button.classList.add('selected');if(step<questions.length){step++;showStep()}else{showRecommendation();quiz.style.display='none';result.classList.add('is-visible');window.scrollTo({top:result.offsetTop-20,behavior:'smooth'})}}));
-document.getElementById('restart').addEventListener('click',()=>{step=1;score=0;document.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));result.classList.remove('is-visible');result.style.display='none';quiz.style.display='block';showStep();quiz.scrollIntoView({behavior:'smooth',block:'start'})});
+document.querySelectorAll('.option').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll(`[data-step="${step}"] .option`).forEach(btn=>btn.classList.remove('selected'));button.classList.add('selected');if(step<questions.length){step++;showStep()}else{showRecommendation();quiz.style.display='none';result.classList.add('is-visible');floating.classList.remove('show');result.scrollIntoView({behavior:'smooth',block:'start'})}}));
+document.getElementById('restart').addEventListener('click',()=>{step=1;score=0;document.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));result.classList.remove('is-visible');result.style.display='';quiz.style.display='block';showStep();quiz.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(updateFloating,50)});
 const floating=document.getElementById('floatingQuizCta');const floatingLink=document.getElementById('floatingQuizLink');function updateFloating(){if(!floating||!quiz)return;const rect=quiz.getBoundingClientRect();floating.classList.toggle('show',rect.top>innerHeight*.65||rect.bottom<80)}window.addEventListener('scroll',updateFloating,{passive:true});window.addEventListener('resize',updateFloating);updateFloating();if(floatingLink){floatingLink.addEventListener('click',()=>setTimeout(()=>{const first=quiz.querySelector('.option');if(first)first.focus({preventScroll:true})},250))}
 </script>
 </body></html>
