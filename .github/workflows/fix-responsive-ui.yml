@@ -1,0 +1,73 @@
+name: Fix responsive UI
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-responsive-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Apply responsive UI fix
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("index.html")
+          text = path.read_text(encoding="utf-8")
+          marker = "/* responsive-ui-fixed-2026-09 */"
+
+          if marker in text:
+              print("Responsive UI fix already applied.")
+              raise SystemExit(0)
+
+          # 데스크톱 전환 기준을 981px에서 768px로 낮춰
+          # 작은 데스크톱 창에서도 모바일처럼 UI가 축소되지 않게 한다.
+          text = text.replace("@media(max-width:980px)", "@media(max-width:767px)")
+          text = text.replace("@media (min-width:981px)", "@media (min-width:768px)")
+          text = text.replace("@media(min-width:981px)", "@media(min-width:768px)")
+          text = text.replace("980px 이하에서는 기존 모바일 구조로 자연스럽게 돌아간다.", "767px 이하에서만 모바일 구조로 전환한다.")
+
+          # 좁은 데스크톱에서는 최소 980px의 작업 영역을 유지한다.
+          needle = "  .app{\n    max-width:1320px;"
+          replacement = "  .app{\n    /* 데스크톱 UI는 화면 폭이 좁아져도 축소하지 않고 최소 캔버스 폭을 유지한다. */\n    min-width:980px;\n    max-width:1320px;"
+          if needle not in text:
+              raise SystemExit("Desktop .app block was not found.")
+          text = text.replace(needle, replacement, 1)
+
+          # 브라우저 창이 980px보다 좁아져도 UI 자체를 축소하지 않고
+          # 페이지가 가로로 스크롤되도록 한다.
+          body_start = text.find("body{")
+          if body_start == -1:
+              raise SystemExit("body rule was not found.")
+          body_end = text.find("}", body_start)
+          if body_end == -1:
+              raise SystemExit("body rule end was not found.")
+          body_rule = text[body_start:body_end + 1]
+          if "overflow-x:auto" not in body_rule:
+              body_rule = body_rule[:-1] + ";overflow-x:auto}"
+              text = text[:body_start] + body_rule + text[body_end + 1:]
+
+          # 중복 실행을 막기 위한 완료 마커.
+          text = text.replace("</style>", f"{marker}\n</style>", 1)
+          path.write_text(text, encoding="utf-8")
+          print("Responsive UI fix applied.")
+          PY
+
+      - name: Commit the fix
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "fix: keep desktop UI size when window narrows"
+          git push
