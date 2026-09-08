@@ -1,0 +1,55 @@
+name: Patch feature number color
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  patch:
+    # 특징 카드의 숫자만 기존 밍카 포인트 컬러로 강조합니다.
+    if: ${{ !contains(github.event.head_commit.message, 'Patch feature number color') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch index.html
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          # 숫자를 별도 요소로 감싸서 숫자만 포인트 컬러를 적용할 수 있게 합니다.
+          replacements = {
+              '1. 간단한 질문 - 복잡한 조건 대신 핵심 기준부터': '<b>1.</b> 간단한 질문 - 복잡한 조건 대신 핵심 기준부터',
+              '2. 조건 비교 - 선택한 답변을 기준으로 정리': '<b>2.</b> 조건 비교 - 선택한 답변을 기준으로 정리',
+              '3. 상담 경로 - 조건에 맞는 제휴 경로 확인': '<b>3.</b> 상담 경로 - 조건에 맞는 제휴 경로 확인',
+          }
+          for old, new in replacements.items():
+              text = text.replace(old, new)
+
+          # 기존 카드 디자인은 유지하고 숫자 색상만 밍카의 기존 포인트 컬러로 맞춥니다.
+          marker = '/* MINGKA_FEATURE_NUMBER_COLOR_V1 */'
+          if marker not in text:
+              css = '''\n  /* MINGKA_FEATURE_NUMBER_COLOR_V1 */\n  /* 특징 카드의 숫자만 기존 밍카 포인트 컬러로 강조하고 나머지 디자인은 그대로 유지합니다. */\n  .trust-strip>div strong b{\n    color:#7567e8;\n    font-weight:900;\n  }\n'''
+              text = text.replace('</style>', css + '</style>', 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Patch feature number color"
+          git push
+
+      - name: Remove temporary workflow
+        run: |
+          git rm .github/workflows/patch-feature-number-color.yml
+          git commit -m "Remove temporary feature number color workflow"
+          git push
