@@ -1,0 +1,41 @@
+name: Rename brand to Mingka
+
+on:
+  push:
+    paths:
+      - '.github/workflows/rename-mingka.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Replace brand text only
+        shell: bash
+        run: |
+          set -e
+          # 브랜드 표기만 변경하고 carpick-korea URL 및 파일명은 유지합니다.
+          find . -type f \( -name '*.html' -o -name '*.svg' \) -not -path './.git/*' -not -path './.github/*' -print0 | while IFS= read -r -d '' file; do
+            perl -0pi -e 's/카픽코리아/밍카/g; s/카픽 코리아/밍카/g; s/카픽의/밍카의/g; s/카픽 내부/밍카 내부/g; s/카픽은/밍카는/g; s/카픽이/밍카가/g; s/카픽에/밍카에/g; s/카픽에서/밍카에서/g; s/카픽을/밍카를/g; s/카픽과/밍카와/g; s/CAR PICK/ MINGKA/g; s/→//g; s/←//g; s/🚗//g' "$file"
+          done
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          set -e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add '*.html' '*.svg'
+          if git diff --cached --quiet; then
+            echo 'No brand changes needed.'
+            exit 0
+          fi
+          git commit -m 'Rename site brand to Mingka'
+          git push
