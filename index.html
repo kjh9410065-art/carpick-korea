@@ -202,6 +202,40 @@ main{padding:24px}.quiz-wrap{max-width:1180px;margin:auto}.quiz-title{text-align
   .trust-strip strong{grid-column:2;grid-row:1;display:block;font-size:18px;line-height:1.35;letter-spacing:-.5px}
   .trust-strip small{grid-column:2;grid-row:2;display:block;margin-top:4px;font-size:13px;line-height:1.5}
 }
+
+/* MINGKA_FEATURE_COPY_V1 */
+
+/* 서비스 특징을 "번호. 제목 - 설명" 한 줄형으로 보여주는 패치 */
+.trust-strip>div{
+  text-align:left;
+}
+.trust-strip>div strong{
+  display:block;
+  color:#292733;
+  font-size:13px;
+  line-height:1.55;
+  letter-spacing:-.35px;
+}
+@media (min-width:768px){
+  .trust-strip>div{
+    padding:18px 20px;
+  }
+  .trust-strip>div strong{
+    font-size:15px;
+    line-height:1.5;
+  }
+}
+@media (max-width:767px){
+  .trust-strip{
+    grid-template-columns:1fr;
+  }
+  .trust-strip>div{
+    padding:15px 16px;
+  }
+  .trust-strip>div strong{
+    font-size:13px;
+  }
+}
 </style>
 </head>
 <body>
@@ -209,7 +243,7 @@ main{padding:24px}.quiz-wrap{max-width:1180px;margin:auto}.quiz-title{text-align
 <div id="floatingQuizCta" class="floating-quiz-cta" aria-label="30초 차량 진단 바로가기"><div class="float-copy"><strong>내게 맞는 차량 이용 방법, 30초면 확인</strong><small>4개의 간단한 질문으로 조건을 확인해보세요.</small></div><a href="#quiz" id="floatingQuizLink">진단 시작</a></div>
 <section class="top"><div class="brand">밍카 <span> MINGKA</span></div><h1>내 조건에 맞는<br>차량 이용 방법 찾기</h1><p>4개의 간단한 질문으로<br>차량 이용 방식을 가볍게 비교해보세요.</p><div class="hero"><div class="hero-row"><div class="car-icon"><svg viewBox="0 0 64 64" aria-hidden="true" width="38" height="38"><path d="M12 39h40v10H12zM17 39l5-14h20l5 14M18 49v5M46 49v5M18 35h28" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="21" cy="46" r="3" fill="currentColor"/><circle cx="43" cy="46" r="3" fill="currentColor"/></svg></div><div><strong>차를 살까, 빌릴까?</strong><small>초기 비용 · 이용 기간 · 관리 부담을 기준으로 확인해요.</small></div></div><div class="hero-points"><span><b>4</b>개 질문</span><span><b>30</b>초 내외</span><span><b>6</b>개 상담 경로</span></div><a class="hero-start" href="#quiz">30초 무료 진단 시작하기</a></div></section>
 <section class="seo-intro" aria-label="밍카 서비스 안내"><h2>자동차 장기렌트·리스 추천</h2><p>밍카는 몇 가지 간단한 질문을 바탕으로 나에게 맞는 자동차 장기렌트와 자동차 리스 이용 방법을 찾아보고 상담 경로를 확인할 수 있도록 도와주는 서비스입니다.</p></section>
-<div class="trust-strip" aria-label="서비스 특징"><div><span>01</span><strong>간단한 질문</strong><small>복잡한 조건 대신 핵심 기준부터</small></div><div><span>02</span><strong>조건 비교</strong><small>선택한 답변을 기준으로 정리</small></div><div><span>03</span><strong>상담 경로</strong><small>조건에 맞는 제휴 경로 확인</small></div></div>
+<div class="trust-strip" aria-label="서비스 특징"><div><strong>1. 간단한 질문 - 복잡한 조건 대신 핵심 기준부터</strong></div><div><strong>2. 조건 비교 - 선택한 답변을 기준으로 정리</strong></div><div><strong>3. 상담 경로 - 조건에 맞는 제휴 경로 확인</strong></div></div>
 <main>
 <section id="quiz"><div class="quiz-intro"><div><span class="kicker">MY CAR CHECK</span><h2>내 상황에 가까운 답을<br>하나씩 골라주세요.</h2></div><span class="quiz-badge">무료 · 간단 진단</span></div><div class="progress-line"><span id="progressText" aria-live="polite">1 / 4</span><span>약 30초</span></div><button id="prevQuestion" class="prev-question" type="button" hidden>이전 질문</button><div class="track"><div class="bar" id="bar"></div></div>
 <div class="question active" data-step="1"><h2>차량 이용에서<br>가장 중요한 것은?</h2><p class="desc">현재 생각과 가장 가까운 것을 골라주세요.</p><div class="options"><button type="button" class="option" data-score="2"><strong>초기 비용을 줄이고 싶어요</strong><span>목돈 부담을 낮추는 게 중요해요.</span></button><button type="button" class="option" data-score="1"><strong>월 비용을 예측하고 싶어요</strong><span>매달 지출을 관리하는 게 중요해요.</span></button><button type="button" class="option" data-score="0"><strong>내 차를 오래 타고 싶어요</strong><span>차량 소유가 더 중요해요.</span></button></div></div>
