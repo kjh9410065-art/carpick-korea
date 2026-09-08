@@ -1,11 +1,11 @@
-// MINGKA_ROBOTS_FALLBACK_V1
-// 정적 파일이 정상 배포되지 않는 경우에도 검색엔진이 robots.txt와 sitemap.xml을
-// 확실하게 받을 수 있도록 Worker에서 해당 경로를 직접 응답합니다.
+// MINGKA_ROBOTS_FALLBACK_V2
+// 정적 파일보다 Worker가 먼저 실행되도록 설정된 경로에서
+// 검색엔진용 robots.txt와 sitemap.xml을 확실하게 직접 반환합니다.
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // 검색엔진이 요청하는 robots.txt를 Worker에서 직접 반환합니다.
+    // robots.txt는 항상 200 OK + text/plain으로 반환해 검색엔진이 정상적으로 읽도록 합니다.
     if (url.pathname === "/robots.txt") {
       return new Response(
         "User-agent: *\nAllow: /\n\nSitemap: https://carpick-korea.carpick.workers.dev/sitemap.xml\n",
@@ -19,7 +19,7 @@ export default {
       );
     }
 
-    // sitemap.xml도 같은 방식으로 직접 제공합니다.
+    // sitemap.xml도 Worker에서 직접 반환해 정적 파일 라우팅 여부와 관계없이 제공합니다.
     if (url.pathname === "/sitemap.xml") {
       const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -31,6 +31,9 @@ export default {
 <url><loc>https://carpick-korea.carpick.workers.dev/long-term-rental-cost-guide.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 <url><loc>https://carpick-korea.carpick.workers.dev/car-buying-checklist.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 <url><loc>https://carpick-korea.carpick.workers.dev/lease-contract-checklist.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://carpick-korea.carpick.workers.dev/privacy.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+<url><loc>https://carpick-korea.carpick.workers.dev/terms.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+<url><loc>https://carpick-korea.carpick.workers.dev/affiliate.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
 </urlset>`;
 
       return new Response(sitemap, {
@@ -42,7 +45,7 @@ export default {
       });
     }
 
-    // 나머지 요청은 기존 정적 파일을 그대로 Cloudflare Assets에서 제공합니다.
+    // 그 외 페이지는 기존 Cloudflare Assets 정적 파일을 그대로 제공합니다.
     return env.ASSETS.fetch(request);
   }
 };
