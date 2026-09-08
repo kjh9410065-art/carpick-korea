@@ -497,3 +497,65 @@ document.addEventListener('DOMContentLoaded',function(){
   .faq-item p{font-size:14px;line-height:1.8}
 }
 </style>
+
+<style>
+/* MINGKA_RESULT_TRUST_FIX_V1 */
+/* 결과 화면의 무료진단/4문항/비교 3개 항목을 독립 카드로 분리합니다. */
+.result-trust{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:16px;
+}
+.result-trust span{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:78px;
+  padding:12px 8px;
+  border:1px solid #eeeaf5;
+  border-radius:16px;
+  background:#faf9ff;
+  color:#777;
+  text-align:center;
+  font-size:11px;
+  line-height:1.45;
+}
+.result-trust span b{
+  display:block;
+  margin-bottom:4px;
+  color:#7567e8;
+  font-size:14px;
+  font-weight:900;
+}
+@media (max-width:767px){
+  .result-trust{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+    margin-top:14px;
+  }
+  .result-trust span{
+    min-height:72px;
+    padding:10px 5px;
+    border-radius:14px;
+    font-size:10px;
+    line-height:1.4;
+    word-break:keep-all;
+  }
+  .result-trust span b{
+    margin-bottom:3px;
+    font-size:13px;
+  }
+}
+@media (min-width:768px){
+  .result-trust span{
+    min-height:84px;
+    font-size:12px;
+  }
+  .result-trust span b{
+    font-size:15px;
+  }
+}
+</style>
+
