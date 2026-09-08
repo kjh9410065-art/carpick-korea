@@ -193,6 +193,15 @@ main{padding:24px}.quiz-wrap{max-width:1180px;margin:auto}.quiz-title{text-align
   .trust-strip strong{grid-column:2;grid-row:1;display:block;font-size:18px;line-height:1.35;letter-spacing:-.5px}
   .trust-strip small{grid-column:2;grid-row:2;display:block;margin-top:4px;font-size:13px;line-height:1.5}
 }
+
+/* MINGKA_FEATURE_CARDS_V3 */
+/* 모바일 특징 카드의 숫자는 왼쪽에 고정하고 제목과 설명은 오른쪽에서 더 크게 읽히도록 정렬합니다. */
+@media (max-width:767px){
+  .trust-strip>div{display:grid;grid-template-columns:50px 1fr;grid-template-rows:auto auto;column-gap:14px;align-items:center;padding:18px 18px;text-align:left}
+  .trust-strip span{grid-column:1;grid-row:1 / 3;display:flex;align-items:center;justify-content:center;margin:0;font-size:22px;line-height:1;font-weight:900}
+  .trust-strip strong{grid-column:2;grid-row:1;display:block;font-size:18px;line-height:1.35;letter-spacing:-.5px}
+  .trust-strip small{grid-column:2;grid-row:2;display:block;margin-top:4px;font-size:13px;line-height:1.5}
+}
 </style>
 </head>
 <body>
