@@ -1,0 +1,65 @@
+name: Fix Mingka desktop width
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch responsive desktop layout
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          # 기존 1320px 고정 폭 때문에 작은 PC 화면에서 오른쪽 영역이 잘리는 문제를 수정합니다.
+          # 큰 화면에서는 1180px을 사용하고, 화면이 좁아지면 화면 폭에 맞춰 줄어들도록 합니다.
+          old = '@media (min-width:768px){html,body{background:#f3f2f8;min-width:980px;overflow-x:auto}.app{width:1320px;min-width:980px;max-width:none;'
+          new = '@media (min-width:768px){html,body{background:#f3f2f8;min-width:0;overflow-x:hidden}.app{width:min(1180px,calc(100vw - 32px));min-width:0;max-width:none;'
+          if old not in text:
+              raise SystemExit('desktop width anchor not found')
+          text = text.replace(old, new, 1)
+
+          # 768~899px 구간에서는 2열 PC 헤더가 너무 좁아지지 않도록 1열로 배치합니다.
+          responsive = '''\n/* 좁은 PC 화면에서도 전체 UI가 잘리지 않도록 레이아웃을 한 열로 전환합니다. */\n@media (min-width:768px) and (max-width:899px){\n  .app{width:calc(100vw - 24px);margin:12px auto;border-radius:22px}\n  .top{min-height:0;padding:34px 34px 40px;display:block}\n  .brand{font-size:16px}\n  .top h1{margin:42px 0 14px;font-size:46px;line-height:1.15;letter-spacing:-2.5px}\n  .top p{margin:0;font-size:15px}\n  .hero{width:100%;margin-top:28px;padding:26px}\n  main{padding:28px}\n}\n@media (min-width:900px){\n  .app{width:min(1180px,calc(100vw - 32px))}\n}\n'''
+          if '좁은 PC 화면에서도 전체 UI가 잘리지 않도록' not in text:
+              text = text.replace('</style>', responsive + '</style>', 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Validate
+        run: |
+          test -s index.html
+          grep -q 'width:min(1180px,calc(100vw - 32px))' index.html
+          grep -q 'min-width:0;overflow-x:hidden' index.html
+          grep -q '좁은 PC 화면에서도 전체 UI가 잘리지 않도록' index.html
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('index.html').read_text(encoding='utf-8')
+          assert '<html lang="ko">' in text
+          assert '</html>' in text
+          assert text.count('<script') == text.count('</script>')
+          assert 'G-06DTYM04S2' in text
+          assert 'MINGKA_TRAFFIC_TRACKING_V1' in text
+          print('responsive desktop validation passed')
+          PY
+
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Fix Mingka desktop width'
+          git push
