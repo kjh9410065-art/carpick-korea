@@ -1,0 +1,32 @@
+name: Feature cards v2
+on:
+  push:
+    branches: [main]
+jobs:
+  patch:
+    if: github.event.head_commit.message != 'Add feature card typography refinement'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply typography and alignment
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '/* MINGKA_FEATURE_CARDS_V3 */'
+          if marker not in s:
+              css = '''\n/* MINGKA_FEATURE_CARDS_V3 */\n/* 모바일 특징 카드의 숫자는 왼쪽에 고정하고 제목과 설명은 오른쪽에서 더 크게 읽히도록 정렬합니다. */\n@media (max-width:767px){\n  .trust-strip>div{display:grid;grid-template-columns:50px 1fr;grid-template-rows:auto auto;column-gap:14px;align-items:center;padding:18px 18px;text-align:left}\n  .trust-strip span{grid-column:1;grid-row:1 / 3;display:flex;align-items:center;justify-content:center;margin:0;font-size:22px;line-height:1;font-weight:900}\n  .trust-strip strong{grid-column:2;grid-row:1;display:block;font-size:18px;line-height:1.35;letter-spacing:-.5px}\n  .trust-strip small{grid-column:2;grid-row:2;display:block;margin-top:4px;font-size:13px;line-height:1.5}\n}\n'''
+              s = s.replace('</style>', css + '</style>', 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add feature card typography refinement'
+          git push
