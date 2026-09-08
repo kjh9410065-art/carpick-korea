@@ -1,0 +1,52 @@
+name: Patch mobile text readability
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-mobile-text.yml'
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch mobile typography
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '''@media (min-width:768px) and (max-width:899px){.app{width:calc(100vw - 24px);margin:12px auto;border-radius:22px}'''
+          marker = '''/* 좁은 PC 화면에서도 전체 UI가 잘리지 않도록 레이아웃을 한 열로 전환합니다. */'''
+          if 'MINGKA_MOBILE_READABILITY_V1' not in s:
+              patch = '''\n/* MINGKA_MOBILE_READABILITY_V1: 작은 모바일 화면에서도 본문과 선택지를 읽기 쉽게 키웁니다. */\n@media (max-width:767px){\n  .seo-intro p{font-size:15px;line-height:1.85}\n  .quiz-title h2{font-size:27px}\n  .quiz-title p{font-size:14px;line-height:1.6}\n  #quiz{padding:26px 18px 30px}\n  .question h2{font-size:25px;line-height:1.4}\n  .question .desc{font-size:13px;line-height:1.7}\n  .option{min-height:82px;padding:18px 28px 18px 18px}\n  .option strong{font-size:16px}\n  .option span{font-size:13px;line-height:1.55}\n  .seo-info>p,.guide p,.faq-section>p{font-size:14px;line-height:1.8}\n  .seo-grid p{font-size:13px;line-height:1.75}\n  .guide-grid a{font-size:14px}\n  .faq-item summary{font-size:15px}\n  .faq-item p{font-size:14px;line-height:1.8}\n}\n'''
+              if marker not in s:
+                  raise SystemExit('expected desktop layout marker not found')
+              s = s.replace(marker, patch + marker, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Validate
+        run: |
+          test -s index.html
+          grep -q 'MINGKA_MOBILE_READABILITY_V1' index.html
+          grep -q 'G-06DTYM04S2' index.html
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          assert s.count('<html') == 1 and s.count('</html>') == 1
+          assert s.count('<body') == 1 and s.count('</body>') == 1
+          print('validation ok')
+          PY
+
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Improve mobile text readability'
+          git push
