@@ -1,25 +1,28 @@
-// MINGKA_ROBOTS_FALLBACK_V2
-// 정적 파일보다 Worker가 먼저 실행되도록 설정된 경로에서
-// 검색엔진용 robots.txt와 sitemap.xml을 확실하게 직접 반환합니다.
+// MINGKA_ROBOTS_FALLBACK_V3
+// robots.txt 요청은 항상 Worker에서 직접 처리하고 캐시를 사용하지 않도록 합니다.
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // robots.txt는 항상 200 OK + text/plain으로 반환해 검색엔진이 정상적으로 읽도록 합니다.
+    // 네이버(Yeti)와 일반 검색로봇 모두 사이트 전체 수집을 허용합니다.
     if (url.pathname === "/robots.txt") {
-      return new Response(
-        "User-agent: *\nAllow: /\n\nSitemap: https://carpick-korea.carpick.workers.dev/sitemap.xml\n",
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "text/plain; charset=UTF-8",
-            "Cache-Control": "public, max-age=3600"
-          }
+      const robots =
+        "User-agent: Yeti\nAllow: /\n\n" +
+        "User-agent: *\nAllow: /\n\n" +
+        "Sitemap: https://carpick-korea.carpick.workers.dev/sitemap.xml\n";
+
+      return new Response(robots, {
+        status: 200,
+        headers: {
+          // 네이버가 일반 텍스트 robots.txt로 인식하도록 명시합니다.
+          "Content-Type": "text/plain",
+          // 이전 404/없음 결과가 캐시에 남지 않도록 캐시하지 않습니다.
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"
         }
-      );
+      });
     }
 
-    // sitemap.xml도 Worker에서 직접 반환해 정적 파일 라우팅 여부와 관계없이 제공합니다.
+    // sitemap.xml도 Worker에서 직접 반환합니다.
     if (url.pathname === "/sitemap.xml") {
       const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -40,7 +43,7 @@ export default {
         status: 200,
         headers: {
           "Content-Type": "application/xml; charset=UTF-8",
-          "Cache-Control": "public, max-age=3600"
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"
         }
       });
     }
