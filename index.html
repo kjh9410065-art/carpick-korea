@@ -381,7 +381,8 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   if(prevQuestion)prevQuestion.addEventListener('click',function(){
     if(step<=1)return;
-    questions[step-1].querySelectorAll('.option').forEach(function(btn){btn.classList.remove('selected');});
+    /* 현재 질문의 답변은 지우지 않고 이전 질문으로 돌아갑니다.
+       사용자가 앞에서 선택한 답변을 다시 입력하지 않아도 되도록 유지합니다. */
     step-=1;
     showStep();
     track('quiz_back',{step:step});
@@ -389,6 +390,8 @@ document.addEventListener('DOMContentLoaded',function(){
   if(restart)restart.addEventListener('click',function(){
     step=1;
     options.forEach(function(x){x.classList.remove('selected');});
+    /* 새 진단에서는 quiz_start 이벤트가 다시 기록되도록 시작 상태를 초기화합니다. */
+    questions[0].dataset.started='';
     result.classList.remove('is-visible');
     result.style.display='';
     quiz.style.display='block';
@@ -398,9 +401,12 @@ document.addEventListener('DOMContentLoaded',function(){
     track('quiz_restart');
   });
   if(recommendCta)recommendCta.addEventListener('click',function(){
-    track('recommend_cta_click',{
+    /* 추천 결과에서 실제 제휴 경로로 이동한 클릭을 별도로 기록합니다. */
+    track('affiliate_click',{
       provider:document.getElementById('recommendTitle').textContent.trim(),
-      destination:recommendCta.href
+      destination:recommendCta.href,
+      position:1,
+      is_recommendation:true
     });
   });
   document.addEventListener('click',function(e){
@@ -409,9 +415,9 @@ document.addEventListener('DOMContentLoaded',function(){
       const name=card.querySelector('strong');
       const cards=[...document.querySelectorAll('.partner-card')];
       const position=cards.indexOf(card)+1;
-      track('partner_click',{
+      track('affiliate_click',{
         provider:name?name.textContent.trim():'',
-        position:position,
+        position:position+1,
         destination:card.href,
         is_recommendation:false
       });
