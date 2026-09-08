@@ -1,0 +1,118 @@
+name: Fix result trust cards
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-result-trust.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fix result trust layout
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+
+          # 결과 화면의 3개 신뢰/특징 항목이 span 요소만 사용하고 있어
+          # 모바일에서 문구가 서로 붙어 보이는 문제를 CSS로 바로잡습니다.
+          patch = r'''
+          <style>
+          /* MINGKA_RESULT_TRUST_FIX_V1 */
+          /* 결과 화면의 무료진단/4문항/비교 3개 항목을 독립 카드로 분리합니다. */
+          .result-trust{
+            display:grid;
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:10px;
+            margin-top:16px;
+          }
+          .result-trust span{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            min-height:78px;
+            padding:12px 8px;
+            border:1px solid #eeeaf5;
+            border-radius:16px;
+            background:#faf9ff;
+            color:#777;
+            text-align:center;
+            font-size:11px;
+            line-height:1.45;
+          }
+          .result-trust span b{
+            display:block;
+            margin-bottom:4px;
+            color:#7567e8;
+            font-size:14px;
+            font-weight:900;
+          }
+          @media (max-width:767px){
+            .result-trust{
+              grid-template-columns:repeat(3,minmax(0,1fr));
+              gap:7px;
+              margin-top:14px;
+            }
+            .result-trust span{
+              min-height:72px;
+              padding:10px 5px;
+              border-radius:14px;
+              font-size:10px;
+              line-height:1.4;
+              word-break:keep-all;
+            }
+            .result-trust span b{
+              margin-bottom:3px;
+              font-size:13px;
+            }
+          }
+          @media (min-width:768px){
+            .result-trust span{
+              min-height:84px;
+              font-size:12px;
+            }
+            .result-trust span b{
+              font-size:15px;
+            }
+          }
+          </style>
+          '''
+
+          # 같은 패치가 중복 적용되지 않도록 먼저 기존 패치를 제거합니다.
+          marker_start = '<style>\n          /* MINGKA_RESULT_TRUST_FIX_V1 */'
+          if marker_start in html:
+              start = html.index(marker_start)
+              end = html.index('</style>', start) + len('</style>')
+              html = html[:start] + html[end:]
+
+          # 문서 마지막에 패치를 추가해 기존 스타일을 안전하게 덮어씁니다.
+          html = html.rstrip() + '\n' + patch + '\n'
+          path.write_text(html, encoding='utf-8')
+
+      - name: Verify patch
+        run: |
+          grep -q 'MINGKA_RESULT_TRUST_FIX_V1' index.html
+          grep -q '.result-trust' index.html
+
+      - name: Commit patch and remove workflow
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html .github/workflows/fix-result-trust.yml
+          git commit -m 'Fix mobile result trust cards' || exit 0
+          git push
+          git rm .github/workflows/fix-result-trust.yml
+          git commit -m 'Remove temporary result trust workflow'
+          git push
