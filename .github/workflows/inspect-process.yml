@@ -1,0 +1,17 @@
+name: Inspect process section
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect process markup
+        run: |
+          echo '--- MATCHES ---'
+          grep -n -B12 -A12 -E '간단한 질문|조건 비교|상담 경로' index.html || true
+          echo '--- PROCESS CLASSES ---'
+          grep -oE 'class="[^"]+"' index.html | grep -E 'process|step|feature' | sort -u || true
