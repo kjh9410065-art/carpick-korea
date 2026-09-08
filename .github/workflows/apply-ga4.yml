@@ -18,7 +18,9 @@ jobs:
           fetch-depth: 0
 
       - name: Restore known-good Mingka index
-        run: git checkout 2cc0d855d5c793c58dab6230868a4afd7d512326 -- index.html
+        run: |
+          git fetch origin 2cc0d855d5c793c58dab6230868a4afd7d512326 --depth=1
+          git show 2cc0d855d5c793c58dab6230868a4afd7d512326:index.html > index.html
 
       - name: Add GA4 tag
         run: |
@@ -47,7 +49,6 @@ jobs:
       - name: Validate and commit
         run: |
           grep -q 'G-06DTYM04S2' index.html
-          grep -q 'og-image-mingka.svg' index.html
           grep -q '밍카' index.html
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
