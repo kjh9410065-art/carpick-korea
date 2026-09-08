@@ -1,0 +1,73 @@
+name: Apply CPA tracking patch
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch index.html
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          # 브랜드 변경 과정에서 남아 있던 이전 서비스명 표기를 정리합니다.
+          text = text.replace('aria-label="카픽 서비스 안내"', 'aria-label="밍카 서비스 안내"')
+          text = text.replace('카픽 퀴즈에서 선택한 조건을 업체별 기준으로 비교해 계산한 내부 매칭 점수입니다.', '밍카에서 선택한 조건을 업체별 기준으로 비교해 계산한 내부 매칭 점수입니다.')
+          text = text.replace('카픽  MINGKA', '밍카  MINGKA')
+
+          # 이미 패치가 적용되어 있다면 중복 수정하지 않습니다.
+          if 'MINGKA_TRAFFIC_TRACKING_V1' not in text:
+              old = """  function track(name,params){window.dataLayer=window.dataLayer||[];const payload=Object.assign({event:name},params||{});window.dataLayer.push(payload);if(typeof window.gtag==='function'){window.gtag('event',name,params||{});}}\n  function getAnswers()"""
+              new = """  /* MINGKA_TRAFFIC_TRACKING_V1\n     유입 경로 정보를 브라우저 세션에만 보관하고 GA4 행동 이벤트에 함께 전달합니다.\n     이름, 전화번호 같은 개인정보는 수집하지 않습니다. */\n  function getTrafficContext(){\n    const keys=['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];\n    let saved={};\n    try{\n      const raw=sessionStorage.getItem('mingka_traffic');\n      if(raw)saved=JSON.parse(raw)||{};\n    }catch(e){}\n    const current={};\n    try{\n      const params=new URLSearchParams(location.search);\n      keys.forEach(function(key){\n        const value=(params.get(key)||'').trim().slice(0,100);\n        if(value)current[key]=value;\n      });\n    }catch(e){}\n    const merged=Object.assign({},saved,current);\n    try{sessionStorage.setItem('mingka_traffic',JSON.stringify(merged));}catch(e){}\n    return merged;\n  }\n  const trafficContext=getTrafficContext();\n  function track(name,params){\n    window.dataLayer=window.dataLayer||[];\n    const payload=Object.assign({event:name},trafficContext,params||{});\n    window.dataLayer.push(payload);\n    if(typeof window.gtag==='function'){window.gtag('event',name,Object.assign({},trafficContext,params||{}));}\n  }\n  function getAnswers()"""
+              if old not in text:
+                  raise SystemExit('track function anchor not found')
+              text = text.replace(old, new, 1)
+
+              # 추천 상담 버튼 클릭에는 업체명과 목적 URL을 함께 기록합니다.
+              old = """  if(recommendCta)recommendCta.addEventListener('click',function(){track('recommend_cta_click',{provider:document.getElementById('recommendTitle').textContent});});document.addEventListener('click',function(e){const card=e.target.closest('.partner-card');if(card){const name=card.querySelector('strong');track('partner_click',{provider:name?name.textContent.trim():''});}const guide=e.target.closest('.guide-grid a');if(guide){track('guide_click',{guide:guide.textContent.trim()});}});"""
+              new = """  if(recommendCta)recommendCta.addEventListener('click',function(){\n    track('recommend_cta_click',{\n      provider:document.getElementById('recommendTitle').textContent.trim(),\n      destination:recommendCta.href\n    });\n  });\n  document.addEventListener('click',function(e){\n    const card=e.target.closest('.partner-card');\n    if(card){\n      const name=card.querySelector('strong');\n      const cards=[...document.querySelectorAll('.partner-card')];\n      const position=cards.indexOf(card)+1;\n      track('partner_click',{\n        provider:name?name.textContent.trim():'',\n        position:position,\n        destination:card.href,\n        is_recommendation:false\n      });\n    }\n    const guide=e.target.closest('.guide-grid a');\n    if(guide){track('guide_click',{guide:guide.textContent.trim()});}\n  });"""
+              if old not in text:
+                  raise SystemExit('click tracking anchor not found')
+              text = text.replace(old, new, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Validate patch
+        run: |
+          test -s index.html
+          grep -q 'G-06DTYM04S2' index.html
+          grep -q 'MINGKA_TRAFFIC_TRACKING_V1' index.html
+          grep -q "partner_click" index.html
+          grep -q '밍카 서비스 안내' index.html
+          grep -q '밍카  MINGKA' index.html
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('index.html').read_text(encoding='utf-8')
+          assert '<html lang="ko">' in text
+          assert '</html>' in text
+          assert text.count('<script') == text.count('</script>')
+          print('index.html validation passed')
+          PY
+
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Improve Mingka CPA tracking'
+          git push
