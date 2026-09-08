@@ -95,6 +95,16 @@ main{padding:24px}.quiz-wrap{max-width:1180px;margin:auto}.quiz-title{text-align
     line-height:1.5;
   }
 }
+
+/* MINGKA_FEATURE_CARDS_V1 */
+/* 모바일에서 01, 02, 03 카드를 가로형 정보 카드로 바꿔 숫자는 왼쪽에 두고 제목과 설명은 더 크게 보여줍니다. */
+@media (max-width:767px){
+  .trust-strip{grid-template-columns:1fr;gap:10px}
+  .trust-strip>div{padding:16px 18px;text-align:left}
+  .trust-strip span{display:inline-block;margin:0 8px 0 0;font-size:12px}
+  .trust-strip strong{display:inline;font-size:16px}
+  .trust-strip small{margin-top:5px;font-size:12px}
+}
 </style>
 </head>
 <body>
