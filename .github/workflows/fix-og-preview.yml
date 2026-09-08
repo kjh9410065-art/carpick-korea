@@ -1,0 +1,28 @@
+name: Fix OG preview
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-og-preview.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update OG image reference
+        run: |
+          set -e
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('https://carpick-korea.carpick.workers.dev/og-image.svg', 'https://carpick-korea.carpick.workers.dev/og-image-mingka.svg')
+          s = s.replace('밍카, 밍카, 카픽, 자동차 장기렌트', '밍카, 자동차 장기렌트')
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Use cache-busted Mingka OG image' || exit 0
+          git push
