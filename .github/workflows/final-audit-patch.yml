@@ -1,0 +1,61 @@
+name: Final audit patch
+
+on:
+  push:
+    paths:
+      - '.github/workflows/final-audit-patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch quiz UX and analytics
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          old_back = """    questions[step-1].querySelectorAll('.option').forEach(function(btn){btn.classList.remove('selected');});\n    step-=1;\n    showStep();\n    track('quiz_back',{step:step});"""
+          new_back = """    /* 현재 질문의 답변은 지우지 않고 이전 질문으로 돌아갑니다.\n       사용자가 앞에서 선택한 답변을 다시 입력하지 않아도 되도록 유지합니다. */\n    step-=1;\n    showStep();\n    track('quiz_back',{step:step});"""
+          if old_back not in text:
+              raise SystemExit('back-navigation target not found')
+          text = text.replace(old_back, new_back, 1)
+
+          old_restart = """    step=1;\n    options.forEach(function(x){x.classList.remove('selected');});\n    result.classList.remove('is-visible');"""
+          new_restart = """    step=1;\n    options.forEach(function(x){x.classList.remove('selected');});\n    /* 새 진단에서는 quiz_start 이벤트가 다시 기록되도록 시작 상태를 초기화합니다. */\n    questions[0].dataset.started='';\n    result.classList.remove('is-visible');"""
+          if old_restart not in text:
+              raise SystemExit('restart target not found')
+          text = text.replace(old_restart, new_restart, 1)
+
+          old_recommend = """  if(recommendCta)recommendCta.addEventListener('click',function(){\n    track('recommend_cta_click',{\n      provider:document.getElementById('recommendTitle').textContent.trim(),\n      destination:recommendCta.href\n    });\n  });"""
+          new_recommend = """  if(recommendCta)recommendCta.addEventListener('click',function(){\n    /* 추천 결과에서 실제 제휴 경로로 이동한 클릭을 별도로 기록합니다. */\n    track('affiliate_click',{\n      provider:document.getElementById('recommendTitle').textContent.trim(),\n      destination:recommendCta.href,\n      position:1,\n      is_recommendation:true\n    });\n  });"""
+          if old_recommend not in text:
+              raise SystemExit('recommend tracking target not found')
+          text = text.replace(old_recommend, new_recommend, 1)
+
+          old_partner = """      track('partner_click',{\n        provider:name?name.textContent.trim():'',\n        position:position,\n        destination:card.href,\n        is_recommendation:false\n      });"""
+          new_partner = """      track('affiliate_click',{\n        provider:name?name.textContent.trim():'',\n        position:position+1,\n        destination:card.href,\n        is_recommendation:false\n      });"""
+          if old_partner not in text:
+              raise SystemExit('partner tracking target not found')
+          text = text.replace(old_partner, new_partner, 1)
+
+          path.write_text(text, encoding='utf-8')
+
+      - name: Commit patch and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Improve quiz back navigation and affiliate tracking"
+          git push
+          git rm .github/workflows/final-audit-patch.yml
+          git commit -m "Remove temporary final audit workflow"
+          git push
