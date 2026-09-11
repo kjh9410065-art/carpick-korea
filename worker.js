@@ -67,13 +67,30 @@ export default {
 
     // Google에게 이 페이지의 대표 주소가 새 MINGKA 주소임을 명시적으로 알려줍니다.
     // 기존 canonical 태그가 있으면 새 주소로 고정하고, 없으면 head 안에 추가합니다.
-    const canonicalTag = '<!-- Google에게 이 페이지의 대표 주소가 새 MINGKA 주소임을 알려줌 -->\n<link rel="canonical" href="https://mingka.tcflick.com/" />';
+    const canonicalTag = '<!-- Google에게 이 페이지의 대표 주소가 새 MINGKA 도메인임을 알려줌 -->\n<link rel="canonical" href="https://mingka.tcflick.com/" />';
     if (/<link\s+rel=["']canonical["'][^>]*>/i.test(html)) {
-      html = html.replace(/<!-- Google에게 이 페이지의 대표 주소가 새 MINGKA 주소임을 알려줌 -->\s*<link\s+rel=["']canonical["'][^>]*>/i, canonicalTag);
+      html = html.replace(/<!-- Google에게 이 페이지의 대표 주소가 새 MINGKA 도메인임을 알려줌 -->\s*<link\s+rel=["']canonical["'][^>]*>/i, canonicalTag);
       html = html.replace(/<link\s+rel=["']canonical["'][^>]*>/i, canonicalTag);
     } else {
       html = html.replace(/<head>/i, `<head>\n${canonicalTag}`);
     }
+
+    // 광고 플랫폼 코드를 나중에 넣을 수 있도록 실제 광고 자리만 먼저 만듭니다.
+    // 상단/중단/하단 3곳을 확보하며, 현재는 광고가 없어도 페이지 레이아웃이 깨지지 않습니다.
+    const adSlots = `
+<style>
+.mingka-ad-slot{width:100%;min-height:90px;margin:18px 0;padding:10px;display:flex;align-items:center;justify-content:center;border:1px dashed #ddd8e8;border-radius:14px;background:#faf9fc;overflow:hidden;box-sizing:border-box}
+.mingka-ad-slot::before{content:"광고 영역";font-size:11px;color:#aaa;letter-spacing:.05em}
+.mingka-ad-slot.mingka-ad-large{min-height:250px}
+@media(max-width:600px){.mingka-ad-slot{min-height:70px;margin:14px 0}.mingka-ad-slot.mingka-ad-large{min-height:180px}}
+</style>
+<div id="mingkaAdTop" class="mingka-ad-slot" data-ad-position="top"></div>
+<div id="mingkaAdMiddle" class="mingka-ad-slot mingka-ad-large" data-ad-position="middle"></div>
+<div id="mingkaAdBottom" class="mingka-ad-slot" data-ad-position="bottom"></div>
+`;
+
+    // 광고 영역은 body 시작 부분에 삽입합니다.
+    html = html.replace(/<body([^>]*)>/i, `<body$1>${adSlots}`);
 
     const footer = `
 <footer class="mingka-footer">
