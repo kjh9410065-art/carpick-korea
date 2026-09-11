@@ -75,22 +75,32 @@ export default {
       html = html.replace(/<head>/i, `<head>\n${canonicalTag}`);
     }
 
-    // 광고 플랫폼 코드를 나중에 넣을 수 있도록 실제 광고 자리만 먼저 만듭니다.
-    // 상단/중단/하단 3곳을 확보하며, 현재는 광고가 없어도 페이지 레이아웃이 깨지지 않습니다.
-    const adSlots = `
+    // 광고는 상단에 하나만 배치하고, 나머지는 본문 중간과 하단으로 분산합니다.
+    // 광고 코드는 나중에 각 자리의 div 안에 연결할 수 있도록 구조만 먼저 준비합니다.
+    const adStyle = `
 <style>
 .mingka-ad-slot{width:100%;min-height:90px;margin:18px 0;padding:10px;display:flex;align-items:center;justify-content:center;border:1px dashed #ddd8e8;border-radius:14px;background:#faf9fc;overflow:hidden;box-sizing:border-box}
 .mingka-ad-slot::before{content:"광고 영역";font-size:11px;color:#aaa;letter-spacing:.05em}
-.mingka-ad-slot.mingka-ad-large{min-height:250px}
-@media(max-width:600px){.mingka-ad-slot{min-height:70px;margin:14px 0}.mingka-ad-slot.mingka-ad-large{min-height:180px}}
-</style>
-<div id="mingkaAdTop" class="mingka-ad-slot" data-ad-position="top"></div>
-<div id="mingkaAdMiddle" class="mingka-ad-slot mingka-ad-large" data-ad-position="middle"></div>
-<div id="mingkaAdBottom" class="mingka-ad-slot" data-ad-position="bottom"></div>
-`;
+.mingka-ad-large{min-height:250px}
+@media(max-width:600px){.mingka-ad-slot{min-height:70px;margin:14px 0}.mingka-ad-large{min-height:180px}}
+</style>`;
 
-    // 광고 영역은 body 시작 부분에 삽입합니다.
-    html = html.replace(/<body([^>]*)>/i, `<body$1>${adSlots}`);
+    const topAd = `<div id="mingkaAdTop" class="mingka-ad-slot" data-ad-position="top"></div>`;
+    const middleAd = `<div id="mingkaAdMiddle" class="mingka-ad-slot mingka-ad-large" data-ad-position="middle"></div>`;
+    const bottomAd = `<div id="mingkaAdBottom" class="mingka-ad-slot" data-ad-position="bottom"></div>`;
+
+    // 광고 스타일과 상단 광고 1개만 body 시작 부분에 넣습니다.
+    html = html.replace(/<body([^>]*)>/i, `<body$1>${adStyle}${topAd}`);
+
+    // main이 있으면 본문이 끝나기 직전에 중간 광고를 넣어 상단 광고와 분리합니다.
+    // main 태그가 없는 페이지에서는 첫 번째 article/section 뒤쪽을 우선 사용합니다.
+    if (/<\/main>/i.test(html)) {
+      html = html.replace(/<\/main>/i, `${middleAd}\n</main>`);
+    } else if (/<\/section>/i.test(html)) {
+      html = html.replace(/<\/section>/i, `</section>\n${middleAd}`);
+    } else {
+      html = html.replace(/<\/body>/i, `${middleAd}\n</body>`);
+    }
 
     const footer = `
 <footer class="mingka-footer">
@@ -113,8 +123,8 @@ export default {
 .mingka-footer-copy{color:#aaa;font-size:11px}
 </style>`;
 
-    // 기존 페이지의 </body> 직전에 푸터를 삽입합니다.
-    const updatedHtml = html.replace(/<\/body>/i, `${footer}\n</body>`);
+    // 하단 광고는 푸터 바로 앞에 배치해서 광고가 연속으로 붙지 않게 합니다.
+    const updatedHtml = html.replace(/<\/body>/i, `${bottomAd}\n${footer}\n</body>`);
 
     // HTML 본문을 수정했으므로 오래된 Content-Length 헤더는 제거합니다.
     const headers = new Headers(response.headers);
