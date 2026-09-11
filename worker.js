@@ -1,4 +1,4 @@
-// MINGKA_SEO_DOMAIN_V6
+// MINGKA_SEO_DOMAIN_V7
 // 새 공식 도메인(mingka.tcflick.com)을 기준으로 robots/sitemap과 HTML의 SEO 주소를 통일합니다.
 export default {
   async fetch(request, env) {
@@ -16,7 +16,6 @@ export default {
         "User-agent: Yeti\nAllow: /\n\n" +
         "User-agent: *\nAllow: /\n\n" +
         "Sitemap: https://mingka.tcflick.com/sitemap.xml\n";
-
       return new Response(robots, {
         status: 200,
         headers: {
@@ -42,7 +41,6 @@ export default {
 <url><loc>https://mingka.tcflick.com/terms.html</loc><lastmod>2026-09-11</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
 <url><loc>https://mingka.tcflick.com/affiliate.html</loc><lastmod>2026-09-09</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
 </urlset>`;
-
       return new Response(sitemap, {
         status: 200,
         headers: {
@@ -55,8 +53,6 @@ export default {
     // 정적 페이지를 가져온 뒤 HTML 안에 남아 있는 예전 도메인을 새 도메인으로 바꿉니다.
     const response = await env.ASSETS.fetch(request);
     const contentType = response.headers.get("content-type") || "";
-
-    // HTML이 아니면 원래 응답을 그대로 반환합니다.
     if (!contentType.includes("text/html")) {
       return response;
     }
@@ -68,6 +64,16 @@ export default {
       "https://carpick-korea.carpick.workers.dev",
       "https://mingka.tcflick.com"
     );
+
+    // Google에게 이 페이지의 대표 주소가 새 MINGKA 주소임을 명시적으로 알려줍니다.
+    // 기존 canonical 태그가 있으면 새 주소로 고정하고, 없으면 head 안에 추가합니다.
+    const canonicalTag = '<!-- Google에게 이 페이지의 대표 주소가 새 MINGKA 주소임을 알려줌 -->\n<link rel="canonical" href="https://mingka.tcflick.com/" />';
+    if (/<link\s+rel=["']canonical["'][^>]*>/i.test(html)) {
+      html = html.replace(/<!-- Google에게 이 페이지의 대표 주소가 새 MINGKA 주소임을 알려줌 -->\s*<link\s+rel=["']canonical["'][^>]*>/i, canonicalTag);
+      html = html.replace(/<link\s+rel=["']canonical["'][^>]*>/i, canonicalTag);
+    } else {
+      html = html.replace(/<head>/i, `<head>\n${canonicalTag}`);
+    }
 
     const footer = `
 <footer class="mingka-footer">
