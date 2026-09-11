@@ -32,6 +32,10 @@ export default {
     const contentType = response.headers.get("content-type") || "";
     if (!contentType.includes("text/html")) return response;
     let html = await response.text();
+
+    // 네이버 서치어드바이저에서 발급한 최신 사이트 소유확인 태그를 실제 응답 HTML에 적용합니다.
+    html = html.replace(/<meta\s+name=["']naver-site-verification["'][^>]*>/i, '<meta name="naver-site-verification" content="664bd9e0eaf277369ff1c6ce3f62e8e804c13f5f" />');
+
     html = html.replaceAll("https://carpick-korea.carpick.workers.dev","https://mingka.tcflick.com");
     const canonicalTag = '<!-- Google에게 이 페이지의 대표 주소가 새 MINGKA 도메인임을 알려줌 -->\n<link rel="canonical" href="https://mingka.tcflick.com/" />';
     if (/<link\s+rel=["']canonical["'][^>]*>/i.test(html)) {
@@ -39,6 +43,12 @@ export default {
       html = html.replace(/<link\s+rel=["']canonical["'][^>]*>/i, canonicalTag);
     } else {
       html = html.replace(/<head>/i, `<head>\n${canonicalTag}`);
+    }
+
+    // 새 MINGKA 아이콘을 모든 HTML 페이지의 브라우저 탭/홈 화면 아이콘으로 적용합니다.
+    const iconTags = '<link rel="icon" href="/favicon.jpg" type="image/jpeg" />\n<link rel="apple-touch-icon" href="/favicon.jpg" />';
+    if (!/<link\s+rel=["']icon["'][^>]*favicon\.jpg/i.test(html)) {
+      html = html.replace(/<head>/i, `<head>\n${iconTags}`);
     }
 
     // 광고는 상단 1개, 설문조사 바로 아래 1개, 하단 1개로 분산합니다.
