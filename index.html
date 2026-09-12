@@ -9,13 +9,13 @@
 <meta name="theme-color" content="#7567e8">
 <meta name="keywords" content="밍카, 자동차 장기렌트, 장기렌터카, 자동차 리스, 장기렌트 추천, 자동차 리스 추천">
 <meta name="description" content="밍카에서 4가지 질문으로 나에게 맞는 자동차 장기렌트와 자동차 리스를 비교하고 차량 이용 방법을 추천받아보세요.">
-<link rel="canonical" href="https://carpick-korea.carpick.workers.dev/">
+<link rel="canonical" href="https://mingka.tcflick.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="밍카 | 나에게 맞는 차량 이용 방법 찾기">
 <meta property="og:description" content="4개의 간단한 질문으로 차량 이용 방식을 가볍게 비교해보세요.">
-<meta property="og:url" content="https://carpick-korea.carpick.workers.dev/">
+<meta property="og:url" content="https://mingka.tcflick.com/">
 <meta property="og:site_name" content="밍카">
-<meta property="og:image" content="https://carpick-korea.carpick.workers.dev/og-image-mingka.svg?v=20260908-2">
+<meta property="og:image" content="https://mingka.tcflick.com/og-image-mingka.svg?v=20260908-2">
 <title>밍카 | 장기렌트·리스 차량 이용 방법 비교</title>
 <!-- Google Analytics 4: 밍카 사이트 방문 및 주요 행동을 측정합니다. -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-06DTYM04S2"></script>
@@ -53,214 +53,27 @@ main{padding:24px}.quiz-wrap{max-width:1180px;margin:auto}.quiz-title{text-align
 
 /* 좁은 PC 화면에서도 전체 UI가 잘리지 않도록 레이아웃을 한 열로 전환합니다. */
 @media (min-width:768px) and (max-width:899px){
-  .app{width:calc(100vw - 24px);margin:12px auto;border-radius:22px}
-  .top{min-height:0;padding:34px 34px 40px;display:block}
-  .brand{font-size:16px}
-  .top h1{margin:42px 0 14px;font-size:46px;line-height:1.15;letter-spacing:-2.5px}
-  .top p{margin:0;font-size:15px}
-  .hero{width:100%;margin-top:28px;padding:26px}
-  main{padding:28px}
+.top{grid-template-columns:1fr;padding:36px 42px 46px;row-gap:24px}.top h1{grid-column:1;grid-row:auto}.top p{grid-column:1;grid-row:auto;margin-top:0}.hero{grid-column:1;grid-row:auto;max-width:620px;justify-self:center}.seo-intro,main{padding-left:34px;padding-right:34px}.options{grid-template-columns:1fr 1fr}.option{min-height:150px}.seo-grid{grid-template-columns:1fr 1fr}.faq-list{grid-template-columns:1fr}.partner-list{grid-template-columns:1fr 1fr}
 }
-@media (min-width:900px){
-  .app{width:min(1180px,calc(100vw - 32px))}
-}
-
-/* 데스크톱 서비스 특징 카드는 숫자를 왼쪽에 두고 설명 글씨를 키워 읽기 쉽게 만듭니다. */
-@media (min-width:768px){
-  .trust-strip>div{
-    display:grid;
-    grid-template-columns:76px 1fr;
-    grid-template-rows:auto auto;
-    align-items:center;
-    column-gap:18px;
-    padding:22px 24px;
-    text-align:left;
-  }
-  .trust-strip span{
-    grid-row:1 / 3;
-    align-self:center;
-    margin:0;
-    font-size:30px;
-    line-height:1;
-    letter-spacing:-1px;
-  }
-  .trust-strip strong{
-    font-size:21px;
-    line-height:1.35;
-    letter-spacing:-.8px;
-  }
-  .trust-strip small{
-    margin-top:4px;
-    font-size:13px;
-    line-height:1.5;
-  }
-}
-
-/* MINGKA_FEATURE_CARDS_V1 */
-/* 모바일에서 01, 02, 03 카드를 가로형 정보 카드로 바꿔 숫자는 왼쪽에 두고 제목과 설명은 더 크게 보여줍니다. */
-@media (max-width:767px){
-  .trust-strip{grid-template-columns:1fr;gap:10px}
-  .trust-strip>div{padding:16px 18px;text-align:left}
-  .trust-strip span{display:inline-block;margin:0 8px 0 0;font-size:12px}
-  .trust-strip strong{display:inline;font-size:16px}
-  .trust-strip small{margin-top:5px;font-size:12px}
-}
-
-/* 밍카 PC 화면 한 단계 확대 패치 */
-@media (min-width:768px){
-  /* PC에서 콘텐츠가 너무 좁게 보이지 않도록 전체 서비스 폭을 조금 넓힙니다. */
-  .app{
-    width:min(1280px,calc(100vw - 48px));
-  }
-
-  /* 첫 화면의 좌우 여백과 두 영역의 크기를 함께 키워 PC에서 여유 있게 보이게 합니다. */
-  .top{
-    padding:44px 72px 58px;
-    grid-template-columns:minmax(0,1fr) 500px;
-    column-gap:78px;
-  }
-
-  /* 메인 제목은 PC에서 한 단계만 키워 시선이 먼저 잡히도록 합니다. */
-  .top h1{
-    font-size:62px;
-    max-width:680px;
-  }
-
-  /* 오른쪽 진단 카드도 화면 크기에 맞춰 조금 넓힙니다. */
-  .hero{
-    padding:32px;
-  }
-
-  /* 본문 최대 폭을 맞춰 아래 콘텐츠도 같은 기준선으로 정렬합니다. */
-  main{
-    max-width:1280px;
-    padding-left:56px;
-    padding-right:56px;
-  }
-
-  /* 질문 제목과 설명을 한 단계 키워 PC에서 읽기 편하게 합니다. */
-  .quiz-title h2{
-    font-size:38px;
-  }
-  .quiz-title p{
-    font-size:15px;
-  }
-
-  /* 진단 박스의 내부 여백을 조금 늘려 카드가 답답해 보이지 않게 합니다. */
-  #quiz{
-    padding:38px 40px 46px;
-  }
-
-  /* 질문 문구는 모바일과 달리 PC에서 크게 보여도 과하지 않도록 40px로 조정합니다. */
-  .question h2{
-    font-size:40px;
-  }
-
-  /* 선택지는 가로 3열 구조를 유지하면서 높이만 조금 키웁니다. */
-  .options{
-    gap:18px;
-  }
-  .option{
-    min-height:185px;
-    padding:28px 32px 27px 26px;
-  }
-  .option strong{
-    font-size:18px;
-  }
-  .option span{
-    font-size:14px;
-  }
-
-  /* 검색용 정보 영역도 메인 폭과 맞춰 PC에서 좌우가 어긋나지 않게 합니다. */
-  .seo-intro{
-    max-width:1240px;
-    padding-left:56px;
-    padding-right:56px;
-  }
-  .trust-strip{
-    max-width:1200px;
-    padding-left:56px;
-    padding-right:56px;
-  }
-}
-
-
-/* MINGKA_FEATURE_CARDS_FINAL */
-/* 모바일 특징 카드를 가로 정보형으로 구성해 숫자, 제목, 설명의 위계를 분명하게 합니다. */
-@media (max-width:767px){
-  .trust-strip>div{display:grid;grid-template-columns:52px 1fr;grid-template-rows:auto auto;column-gap:14px;align-items:center;padding:18px 18px;text-align:left}
-  .trust-strip span{grid-column:1;grid-row:1 / 3;display:flex;align-items:center;justify-content:center;margin:0;font-size:22px;line-height:1;font-weight:900}
-  .trust-strip strong{grid-column:2;grid-row:1;display:block;font-size:18px;line-height:1.35;letter-spacing:-.5px}
-  .trust-strip small{grid-column:2;grid-row:2;display:block;margin-top:4px;font-size:13px;line-height:1.5}
-}
-
-/* MINGKA_FEATURE_CARDS_V3 */
-/* 모바일 특징 카드의 숫자는 왼쪽에 고정하고 제목과 설명은 오른쪽에서 더 크게 읽히도록 정렬합니다. */
-@media (max-width:767px){
-  .trust-strip>div{display:grid;grid-template-columns:50px 1fr;grid-template-rows:auto auto;column-gap:14px;align-items:center;padding:18px 18px;text-align:left}
-  .trust-strip span{grid-column:1;grid-row:1 / 3;display:flex;align-items:center;justify-content:center;margin:0;font-size:22px;line-height:1;font-weight:900}
-  .trust-strip strong{grid-column:2;grid-row:1;display:block;font-size:18px;line-height:1.35;letter-spacing:-.5px}
-  .trust-strip small{grid-column:2;grid-row:2;display:block;margin-top:4px;font-size:13px;line-height:1.5}
-}
-
-/* MINGKA_FEATURE_COPY_V1 */
-
-/* 서비스 특징을 "번호. 제목 - 설명" 한 줄형으로 보여주는 패치 */
-.trust-strip>div{
-  text-align:left;
-}
-.trust-strip>div strong{
-  display:block;
-  color:#292733;
-  font-size:13px;
-  line-height:1.55;
-  letter-spacing:-.35px;
-}
-@media (min-width:768px){
-  .trust-strip>div{
-    padding:18px 20px;
-  }
-  .trust-strip>div strong{
-    font-size:15px;
-    line-height:1.5;
-  }
-}
-@media (max-width:767px){
-  .trust-strip{
-    grid-template-columns:1fr;
-  }
-  .trust-strip>div{
-    padding:15px 16px;
-  }
-  .trust-strip>div strong{
-    font-size:13px;
-  }
-}
-
-/* 작은 화면에서도 01, 02, 03 카드의 숫자와 설명이 또렷하게 보이도록 조정합니다. */
-@media (min-width:768px){
-  .trust-strip{grid-template-columns:repeat(3,1fr)}
-  .trust-strip>div{display:block;text-align:center;padding:13px 9px}
-  .trust-strip span{display:block;font-size:11px;margin-bottom:3px}
-  .trust-strip strong{font-size:12px}
-  .trust-strip small{font-size:10px;margin-top:4px}
-}
-
-  /* MINGKA_FEATURE_NUMBER_COLOR_V1 */
-  /* 특징 카드의 숫자만 기존 밍카 포인트 컬러로 강조하고 나머지 디자인은 그대로 유지합니다. */
-  .trust-strip>div strong b{
-    color:#7567e8;
-    font-weight:900;
-  }
 </style>
 </head>
 <body>
 <div class="app">
-<div id="floatingQuizCta" class="floating-quiz-cta" aria-label="30초 차량 진단 바로가기"><div class="float-copy"><strong>내게 맞는 차량 이용 방법, 30초면 확인</strong><small>4개의 간단한 질문으로 조건을 확인해보세요.</small></div><a href="#quiz" id="floatingQuizLink">진단 시작</a></div>
-<section class="top"><div class="brand">밍카 <span> MINGKA</span></div><h1>내 조건에 맞는<br>차량 이용 방법 찾기</h1><p>4개의 간단한 질문으로<br>차량 이용 방식을 가볍게 비교해보세요.</p><div class="hero"><div class="hero-row"><div class="car-icon"><svg viewBox="0 0 64 64" aria-hidden="true" width="38" height="38"><path d="M12 39h40v10H12zM17 39l5-14h20l5 14M18 49v5M46 49v5M18 35h28" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="21" cy="46" r="3" fill="currentColor"/><circle cx="43" cy="46" r="3" fill="currentColor"/></svg></div><div><strong>차를 살까, 빌릴까?</strong><small>초기 비용 · 이용 기간 · 관리 부담을 기준으로 확인해요.</small></div></div><div class="hero-points"><span><b>4</b>개 질문</span><span><b>30</b>초 내외</span><span><b>6</b>개 상담 경로</span></div><a class="hero-start" href="#quiz">30초 무료 진단 시작하기</a></div></section>
-<section class="seo-intro" aria-label="밍카 서비스 안내"><h2>자동차 장기렌트·리스 추천</h2><p>밍카는 몇 가지 간단한 질문을 바탕으로 나에게 맞는 자동차 장기렌트와 자동차 리스 이용 방법을 찾아보고 상담 경로를 확인할 수 있도록 도와주는 서비스입니다.</p></section>
-<div class="trust-strip" aria-label="서비스 특징"><div><strong><b>1.</b> 간단한 질문 - 복잡한 조건 대신 핵심 기준부터</strong></div><div><strong><b>2.</b> 조건 비교 - 선택한 답변을 기준으로 정리</strong></div><div><strong><b>3.</b> 상담 경로 - 조건에 맞는 제휴 경로 확인</strong></div></div>
+<header class="top">
+<div class="brand">밍카 <span>· 차량 이용 방법 체크</span></div>
+<h1>나에게 맞는<br>차량 이용 방법을 찾아보세요.</h1>
+<p>복잡한 조건 대신 몇 가지 질문으로 장기렌트와 리스를 비교해볼 수 있어요.</p>
+<div class="hero">
+<div class="hero-row"><div class="car-icon"><svg viewBox="0 0 64 64" width="38" height="38" aria-hidden="true"><path d="M10 39h44v10H10zM16 39l6-15h20l6 15M17 49v5M47 49v5" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="46" r="3" fill="currentColor"/><circle cx="44" cy="46" r="3" fill="currentColor"/></svg></div><div><strong>30초 차량 이용 진단</strong><small>현재 상황에 가까운 답을 고르면<br>비교할 상담 경로를 정리해드려요.</small></div></div>
+<div class="hero-points"><span><b>4</b>간단 질문</span><span><b>30초</b>소요 시간</span><span><b>무료</b>진단 비용</span></div>
+<a class="hero-start" href="#quiz">내 조건 확인하기 <span>→</span></a>
+</div>
+</header>
+<section class="seo-intro"><h2>차량을 어떻게 이용할지 고민된다면</h2><p>자동차를 이용하는 방법은 직접 구매뿐 아니라 장기렌트와 리스처럼 계약 기간 동안 이용하는 방식도 있습니다. 밍카는 몇 가지 질문을 통해 현재 상황에서 어떤 방식부터 비교해볼지 정리할 수 있도록 도와드립니다.</p></section>
+<div class="trust-strip"><div><span>✓</span><strong>간단한 4문항</strong><small>현재 차량 이용 조건만 빠르게 확인합니다.</small></div><div><span>↔</span><strong>장기렌트·리스 비교</strong><small>월 비용 외에도 기간과 관리 조건을 함께 살펴봅니다.</small></div><div><span>◎</span><strong>참고용 진단</strong><small>실제 승인 여부는 상담 과정에서 별도로 확인합니다.</small></div></div>
 <main>
+<div class="quiz-wrap">
+<div class="quiz-title"><div class="kicker">MINGKA CHECK</div><h2>내 상황에 가까운 답을 골라주세요.</h2><p>정답은 없어요. 현재 생각과 가장 가까운 선택을 해주세요.</p></div>
 <section id="quiz"><div class="quiz-intro"><div><span class="kicker">MY CAR CHECK</span><h2>내 상황에 가까운 답을<br>하나씩 골라주세요.</h2></div><span class="quiz-badge">무료 · 간단 진단</span></div><div class="progress-line"><span id="progressText" aria-live="polite">1 / 4</span><span>약 30초</span></div><button id="prevQuestion" class="prev-question" type="button" hidden>이전 질문</button><div class="track"><div class="bar" id="bar"></div></div>
 <div class="question active" data-step="1"><h2>차량 이용에서<br>가장 중요한 것은?</h2><p class="desc">현재 생각과 가장 가까운 것을 골라주세요.</p><div class="options"><button type="button" class="option" data-score="2"><strong>초기 비용을 줄이고 싶어요</strong><span>목돈 부담을 낮추는 게 중요해요.</span></button><button type="button" class="option" data-score="1"><strong>월 비용을 예측하고 싶어요</strong><span>매달 지출을 관리하는 게 중요해요.</span></button><button type="button" class="option" data-score="0"><strong>내 차를 오래 타고 싶어요</strong><span>차량 소유가 더 중요해요.</span></button></div></div>
 <div class="question" data-step="2"><h2>차량을 얼마나<br>이용할 예정인가요?</h2><p class="desc">대략적인 계획을 선택해주세요.</p><div class="options"><button type="button" class="option" data-score="2"><strong>2~5년 정도</strong><span>몇 년 단위로 이용할 예정이에요.</span></button><button type="button" class="option" data-score="1"><strong>5년 이상</strong><span>가능하면 오래 이용할 생각이에요.</span></button><button type="button" class="option" data-score="0"><strong>아직 잘 모르겠어요</strong><span>상황에 따라 달라질 수 있어요.</span></button></div></div>
@@ -272,290 +85,45 @@ main{padding:24px}.quiz-wrap{max-width:1180px;margin:auto}.quiz-title{text-align
 <section class="faq-section" aria-labelledby="faq-title"><h2 id="faq-title">차량 장기렌트·리스 자주 묻는 질문</h2><p>상담을 누르기 전에 많이 확인하는 내용을 간단하게 정리했습니다.</p><div class="faq-list"><details class="faq-item"><summary>장기렌트와 리스 중 무엇이 더 좋은가요?</summary><p>어떤 방식이 무조건 더 좋다고 정해져 있지는 않습니다. 이용 기간, 초기 비용 부담, 차량 관리 방식, 계약 종료 후 조건 등을 함께 비교해보는 것이 좋습니다.</p></details><details class="faq-item"><summary>밍카의 조건 일치도는 실제 승인 가능성인가요?</summary><p>아니요. 조건 일치도는 입력한 답변을 기준으로 상담 경로를 우선 정리하기 위한 밍카의 내부 매칭 점수입니다. 실제 승인 여부는 제휴 업체와 리플알바의 심사 기준에 따라 달라질 수 있습니다.</p></details><details class="faq-item"><summary>상담을 신청하면 바로 계약해야 하나요?</summary><p>상담 경로를 확인하는 것과 실제 계약은 별개의 과정입니다. 구체적인 조건과 계약 가능 여부는 상담 과정에서 확인해주세요.</p></details><details class="faq-item"><summary>월 이용료만 보고 결정해도 될까요?</summary><p>월 비용뿐 아니라 계약 기간, 초기 비용, 만기 조건, 관리 범위 등 전체 조건을 함께 확인하는 편이 좋습니다.</p></details></div></section>
 <a class="bottom-cta" href="#quiz" aria-label="30초 차량 이용 진단으로 이동"><div class="bottom-cta-icon">CHECK</div><div><strong>어떤 방식이 맞는지 아직 고민된다면</strong><p>몇 가지 질문만으로 현재 조건을 정리하고 비교를 시작해보세요.</p></div><span>30초 체크</span></a>
 </main>
-<footer>밍카  MINGKA<br>제휴 링크를 통해 상담이 진행될 수 있습니다.<div class="footer-links"><a href="privacy.html">개인정보 처리 안내</a><a href="terms.html">서비스 이용 안내</a><a href="affiliate.html">제휴 및 상담 연결 안내</a></div></footer></div>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"밍카","url":"https://carpick-korea.carpick.workers.dev/","description":"차량 구매 전 장기렌트와 리스 등 차량 이용 방법을 비교해볼 수 있는 간단한 체크 서비스"}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"장기렌트와 리스 중 무엇이 더 좋은가요?","acceptedAnswer":{"@type":"Answer","text":"어떤 방식이 무조건 더 좋다고 정해져 있지는 않습니다. 이용 기간, 초기 비용 부담, 차량 관리 방식, 계약 종료 후 조건 등을 함께 비교해보는 것이 좋습니다."}},{"@type":"Question","name":"밍카의 조건 일치도는 실제 승인 가능성인가요?","acceptedAnswer":{"@type":"Answer","text":"아니요. 조건 일치도는 입력한 답변을 기준으로 상담 경로를 우선 정리하기 위한 밍카의 내부 매칭 점수입니다. 실제 승인 여부는 제휴 업체와 리플알바의 심사 기준에 따라 달라질 수 있습니다."}},{"@type":"Question","name":"상담을 신청하면 바로 계약해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"상담 경로를 확인하는 것과 실제 계약은 별개의 과정입니다. 구체적인 조건과 계약 가능 여부는 상담 과정에서 확인해주세요."}},{"@type":"Question","name":"월 이용료만 보고 결정해도 될까요?","acceptedAnswer":{"@type":"Answer","text":"월 비용뿐 아니라 계약 기간, 초기 비용, 만기 조건, 관리 범위 등 전체 조건을 함께 확인하는 편이 좋습니다."}}]}</script>
+<footer><div>© 2026 밍카. All rights reserved.</div><div class="footer-links"><a href="privacy.html">개인정보처리방침</a><a href="terms.html">이용약관</a><a href="contact.html">문의</a></div><div class="policy-note">밍카의 진단 결과와 추천은 참고용이며 실제 차량 이용·계약 조건은 제휴 업체와 상담을 통해 확인해주세요.</div></footer>
+</div>
+<div class="floating-quiz-cta" id="floatingQuiz"><a href="#quiz" id="floatingQuizLink">내 조건으로 다시 확인하기<small>30초 차량 이용 진단</small></a></div>
 <script>
-document.addEventListener('DOMContentLoaded',function(){
-  const questions=[...document.querySelectorAll('.question')];
-  const options=[...document.querySelectorAll('.option')];
-  const quiz=document.getElementById('quiz');
-  const result=document.getElementById('result');
-  const bar=document.getElementById('bar');
-  const progressText=document.getElementById('progressText');
-  const prevQuestion=document.getElementById('prevQuestion');
-  const restart=document.getElementById('restart');
-  const recommendCta=document.getElementById('recommendCta');
-  const floating=document.getElementById('floatingQuizCta');
-  const floatingLink=document.getElementById('floatingQuizLink');
-  let step=1;
-  const recommendations=[
-    {name:'카슐랭',url:'https://replyalba.co.kr/pt/wRlNHpkuCa',baseApproval:83.40,target:[2,1,2,2],weights:[2,1,1,2],text:'초기 비용과 관리 부담을 함께 줄이고 싶은 조건을 중심으로 상담을 비교해보기 좋은 경로예요.'},
-    {name:'카슐랭 2',url:'https://replyalba.co.kr/pt/ISJ7VX4MI6',baseApproval:78.39,target:[1,2,1,1],weights:[1,2,1,1],text:'이용 기간과 월 비용을 함께 고려해 상담 조건을 비교해보기 좋은 경로예요.'},
-    {name:'리스렌트 성지',url:'https://replyalba.co.kr/pt/RP3eFQzsha',baseApproval:66.81,target:[1,1,2,1],weights:[1,1,2,1],text:'차량 관리 부담을 줄이고 싶은 조건을 중심으로 상담 경로를 비교해보기 좋아요.'},
-    {name:'원픽 장기렌트카',url:'https://replyalba.co.kr/pt/EBGJfHRjy9',baseApproval:62.50,target:[2,1,1,2],weights:[2,1,1,2],text:'초기 비용과 월 이용 조건을 함께 고려해 상담 경로를 비교해볼 수 있어요.'},
-    {name:'차드림',url:'https://replyalba.co.kr/pt/OjNhqGkzan',baseApproval:50.54,target:[0,2,0,0],weights:[1,2,1,1],text:'장기간 이용하고 직접 관리하는 조건을 고려해 상담 경로를 확인해볼 수 있어요.'},
-    {name:'아이엠카 신차장기렌트카',url:'https://replyalba.co.kr/pt/N9FCsyajBj',baseApproval:47.44,target:[1,1,2,0],weights:[1,1,2,1],text:'관리 부담과 이용 조건을 함께 고려해 상담 경로를 확인해볼 수 있어요.'}
-  ];
-  /* MINGKA_TRAFFIC_TRACKING_V1
-     유입 경로 정보를 브라우저 세션에만 보관하고 GA4 행동 이벤트에 함께 전달합니다.
-     이름, 전화번호 같은 개인정보는 수집하지 않습니다. */
-  function getTrafficContext(){
-    const keys=['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
-    let saved={};
-    try{
-      const raw=sessionStorage.getItem('mingka_traffic');
-      if(raw)saved=JSON.parse(raw)||{};
-    }catch(e){}
-    const current={};
-    try{
-      const params=new URLSearchParams(location.search);
-      keys.forEach(function(key){
-        const value=(params.get(key)||'').trim().slice(0,100);
-        if(value)current[key]=value;
-      });
-    }catch(e){}
-    const merged=Object.assign({},saved,current);
-    try{sessionStorage.setItem('mingka_traffic',JSON.stringify(merged));}catch(e){}
-    return merged;
-  }
-  const trafficContext=getTrafficContext();
-  function track(name,params){
-    window.dataLayer=window.dataLayer||[];
-    const payload=Object.assign({event:name},trafficContext,params||{});
-    window.dataLayer.push(payload);
-    if(typeof window.gtag==='function'){window.gtag('event',name,Object.assign({},trafficContext,params||{}));}
-  }
-  function getAnswers(){return questions.map(function(q){const selected=q.querySelector('.option.selected');return selected?Number(selected.dataset.score):0;});}
-  function ranked(){
-    const answers=getAnswers();
-    return recommendations.map(function(item){
-      const diff=answers.reduce(function(sum,a,i){return sum+Math.abs(a-item.target[i])*item.weights[i];},0);
-      const match=Math.max(40,Math.min(100,100-diff*8));
-      return Object.assign({},item,{match:match,route:match*1000+item.baseApproval});
-    }).sort(function(a,b){return b.route-a.route;});
-  }
-  function showStep(){
-    questions.forEach(function(q){q.classList.remove('active');});
-    const current=questions[step-1];
-    if(!current)return;
-    current.classList.add('active');
-    if(bar)bar.style.width=((step/questions.length)*100)+'%';
-    if(progressText)progressText.textContent=step+' / '+questions.length;
-    if(prevQuestion)prevQuestion.hidden=step<=1;
-  }
-  function showRecommendation(){
-    const list=ranked();
-    const item=list[0];
-    document.getElementById('recommendTitle').textContent=item.name;
-    document.getElementById('recommendText').textContent=item.text;
-    document.getElementById('matchPercent').textContent=item.match+'점';
-    document.getElementById('matchFill').style.width=item.match+'%';
-    recommendCta.href=item.url;
-    recommendCta.textContent=item.name+' 상담 조건 확인하기';
-    const partnerList=document.querySelector('.partner-list');
-    partnerList.innerHTML=list.slice(1).map(function(p){return '<a class="partner-card" href="'+p.url+'" target="_blank" rel="noopener noreferrer"><span><strong>'+p.name+'</strong><div class="partner-match"><div class="partner-match-top"><span>조건 일치도</span><strong>'+p.match+'점</strong></div><div class="partner-match-track"><div class="partner-match-fill" style="width:'+p.match+'%"></div></div></div></span></a>';}).join('');
-  }
-  function finishQuiz(){
-    showRecommendation();
-    quiz.style.display='none';
-    result.classList.add('is-visible');
-    if(floating)floating.classList.remove('show');
-    requestAnimationFrame(function(){const top=result.getBoundingClientRect().top+window.scrollY-18;window.scrollTo({top:top,behavior:'smooth'});});
-    track('quiz_complete',{step:step});
-  }
-  options.forEach(function(button){
-    button.type='button';
-    button.addEventListener('click',function(){if(step===1&&!questions[0].dataset.started){questions[0].dataset.started='1';track('quiz_start');}track('question_answer',{question:step,answer:Number(button.dataset.score)});
-      const current=questions[step-1];
-      if(!current)return;
-      current.querySelectorAll('.option').forEach(function(btn){btn.classList.remove('selected');});
-      button.classList.add('selected');
-      if(step<questions.length){
-        step+=1;
-        showStep();
-      }else{
-        finishQuiz();
-      }
-    });
-  });
-  if(prevQuestion)prevQuestion.addEventListener('click',function(){
-    if(step<=1)return;
-    /* 현재 질문의 답변은 지우지 않고 이전 질문으로 돌아갑니다.
-       사용자가 앞에서 선택한 답변을 다시 입력하지 않아도 되도록 유지합니다. */
-    step-=1;
-    showStep();
-    track('quiz_back',{step:step});
-  });
-  if(restart)restart.addEventListener('click',function(){
-    step=1;
-    options.forEach(function(x){x.classList.remove('selected');});
-    /* 새 진단에서는 quiz_start 이벤트가 다시 기록되도록 시작 상태를 초기화합니다. */
-    questions[0].dataset.started='';
-    result.classList.remove('is-visible');
-    result.style.display='';
-    quiz.style.display='block';
-    showStep();
-    quiz.scrollIntoView({behavior:'smooth',block:'start'});
-    updateFloating();
-    track('quiz_restart');
-  });
-  if(recommendCta)recommendCta.addEventListener('click',function(){
-    /* 추천 결과에서 실제 제휴 경로로 이동한 클릭을 별도로 기록합니다. */
-    track('affiliate_click',{
-      provider:document.getElementById('recommendTitle').textContent.trim(),
-      destination:recommendCta.href,
-      position:1,
-      is_recommendation:true
-    });
-  });
-  document.addEventListener('click',function(e){
-    const card=e.target.closest('.partner-card');
-    if(card){
-      const name=card.querySelector('strong');
-      const cards=[...document.querySelectorAll('.partner-card')];
-      const position=cards.indexOf(card)+1;
-      track('affiliate_click',{
-        provider:name?name.textContent.trim():'',
-        position:position+1,
-        destination:card.href,
-        is_recommendation:false
-      });
-    }
-    const guide=e.target.closest('.guide-grid a');
-    if(guide){track('guide_click',{guide:guide.textContent.trim()});}
-  });
-  function updateFloating(){
-    if(!floating||!quiz||quiz.style.display==='none')return;
-    const rect=quiz.getBoundingClientRect();
-    floating.classList.toggle('show',rect.top>innerHeight*.65||rect.bottom<80);
-  }
-  if(floatingLink)floatingLink.addEventListener('click',function(){setTimeout(function(){const first=quiz.querySelector('.option');if(first)first.focus({preventScroll:true});},250);});
-  window.addEventListener('scroll',updateFloating,{passive:true});
-  window.addEventListener('resize',updateFloating);
-  showStep();
-  updateFloating();
-  track('page_ready');
-});
+const questions=[...document.querySelectorAll('.question')];
+const options=[...document.querySelectorAll('.option')];
+const bar=document.getElementById('bar');
+const progressText=document.getElementById('progressText');
+const prevQuestion=document.getElementById('prevQuestion');
+const result=document.getElementById('result');
+const recommendTitle=document.getElementById('recommendTitle');
+const recommendText=document.getElementById('recommendText');
+const recommendCta=document.getElementById('recommendCta');
+const matchPercent=document.getElementById('matchPercent');
+const matchFill=document.getElementById('matchFill');
+const floatingQuiz=document.getElementById('floatingQuiz');
+const floatingLink=document.getElementById('floatingQuizLink');
+let step=1;
+const recommendations=[
+{name:'카슐랭',url:'https://replyalba.co.kr/pt/wRlNHpkuCa',baseApproval:83.40,target:[2,1,2,2],weights:[2,1,1,2],text:'초기 비용과 관리 부담을 함께 줄이고 싶은 조건을 중심으로 상담을 비교해보기 좋은 경로예요.'},
+{name:'카슐랭 2',url:'https://replyalba.co.kr/pt/ISJ7VX4MI6',baseApproval:78.39,target:[1,2,1,1],weights:[1,2,1,1],text:'이용 기간과 월 비용을 함께 고려해 상담 조건을 비교해보기 좋은 경로예요.'},
+{name:'리스렌트 성지',url:'https://replyalba.co.kr/pt/RP3eFQzsha',baseApproval:66.81,target:[1,1,2,1],weights:[1,1,2,1],text:'차량 관리 부담을 줄이고 싶은 조건을 중심으로 상담 경로를 비교해보기 좋아요.'},
+{name:'원픽 장기렌트카',url:'https://replyalba.co.kr/pt/EBGJfHRjy9',baseApproval:62.50,target:[2,1,1,2],weights:[2,1,1,2],text:'초기 비용과 월 이용 조건을 함께 고려해 상담 경로를 비교해볼 수 있어요.'},
+{name:'차드림',url:'https://replyalba.co.kr/pt/OjNhqGkzan',baseApproval:50.54,target:[0,2,0,0],weights:[1,2,1,1],text:'장기간 이용하고 직접 관리하는 조건을 고려해 상담 경로를 확인해볼 수 있어요.'},
+{name:'아이엠카 신차장기렌트카',url:'https://replyalba.co.kr/pt/N9FCsyajBj',baseApproval:47.44,target:[1,1,2,0],weights:[1,1,2,1],text:'관리 부담과 이용 조건을 함께 고려해 상담 경로를 확인해볼 수 있어요.'}
+];
+function scoreRecommendation(answers,rec){
+let weighted=0,total=0;
+answers.forEach((answer,i)=>{const weight=rec.weights[i]; total+=weight*2; weighted+=(2-Math.abs(answer-rec.target[i]))*weight;});
+return Math.round((weighted/total)*100);
+}
+function chooseRecommendation(answers){return recommendations.map(rec=>({...rec,match:scoreRecommendation(answers,rec)})).sort((a,b)=>b.match-a.match)[0];}
+function showQuestion(n){step=n;questions.forEach(q=>q.classList.toggle('active',Number(q.dataset.step)===step));progressText.textContent=`${step} / ${questions.length}`;bar.style.width=`${step/questions.length*100}%`;prevQuestion.hidden=step===1;}
+function showResult(){const answers=questions.map(q=>Number(q.querySelector('.selected')?.dataset.score??0));const rec=chooseRecommendation(answers);recommendTitle.textContent=rec.name;recommendText.textContent=rec.text;recommendCta.href=rec.url;matchPercent.textContent=`${rec.match}점`;matchFill.style.width=`${rec.match}%`;result.classList.add('is-visible');floatingQuiz.classList.remove('show');result.scrollIntoView({behavior:'smooth',block:'start'});}
+options.forEach(option=>option.addEventListener('click',()=>{const question=option.closest('.question');question.querySelectorAll('.option').forEach(item=>item.classList.remove('selected'));option.classList.add('selected');if(step<questions.length){setTimeout(()=>showQuestion(step+1),140);}else{setTimeout(showResult,180);}}));
+prevQuestion.addEventListener('click',()=>showQuestion(Math.max(1,step-1)));
+document.getElementById('restart').addEventListener('click',()=>{options.forEach(option=>option.classList.remove('selected'));result.classList.remove('is-visible');showQuestion(1);document.getElementById('quiz').scrollIntoView({behavior:'smooth',block:'start'});});
+window.addEventListener('scroll',()=>{floatingQuiz.classList.toggle('show',window.scrollY>600&&!result.classList.contains('is-visible'));});
 </script>
-
-<style>
-/* MINGKA_MOBILE_SPACING_V1
-   모바일에서 콘텐츠 사이의 과도한 공백을 줄이고 한 화면에 더 많은 정보가 자연스럽게 보이도록 조정합니다.
-   글자 크기를 무리하게 키우지 않고 간격과 카드 높이를 중심으로 압축합니다. */
-@media (max-width:767px){
-  .seo-intro{padding:22px 24px 14px}
-  .seo-intro h2{margin-bottom:8px}
-  .seo-intro p{font-size:14px;line-height:1.7}
-  .trust-strip{gap:8px;padding:0 24px 10px}
-  .trust-strip>div{padding:10px 7px;border-radius:14px}
-  .trust-strip span{margin-bottom:2px}
-  .trust-strip strong{font-size:12px}
-  .trust-strip small{margin-top:2px;font-size:9px;line-height:1.3}
-  main{padding:18px 16px}
-  .quiz-title{margin-bottom:12px}
-  .quiz-title h2{font-size:24px}
-  .quiz-title p{font-size:13px}
-  #quiz{margin-top:12px;padding:20px 16px 22px;border-width:2px;border-radius:22px}
-  #quiz:before{margin-bottom:10px;padding:6px 10px}
-  .question{padding-top:18px}
-  .question h2{font-size:23px;line-height:1.35}
-  .question .desc{margin:7px 0 14px;font-size:12px;line-height:1.6}
-  .option{min-height:68px;padding:15px 26px 15px 16px;border-radius:15px}
-  .option strong{font-size:15px}
-  .option span{font-size:12px;line-height:1.45}
-  .options{gap:8px}
-  .seo-info{margin-top:26px;padding-top:22px}
-  .guide{margin-top:22px;padding:18px}
-  .faq-section{margin-top:26px;padding:22px}
-}
-</style>
-
-</body></html>
-
-<style>
-/* MINGKA_MOBILE_READABILITY_V1 */
-/* 모바일에서 본문과 안내 문구가 너무 작아 보이지 않도록 글자 크기만 조정합니다. */
-@media (max-width:767px){
-  .top p{font-size:15px;line-height:1.7}
-  .seo-intro p{font-size:15px;line-height:1.85}
-  .trust-strip>div{font-size:12px}
-  .trust-strip small{font-size:11px;line-height:1.5}
-  .quiz-title p{font-size:14px;line-height:1.6}
-  .question h2{font-size:24px;line-height:1.4}
-  .question .desc{font-size:13px;line-height:1.7}
-  .option{min-height:82px;padding:18px 24px 18px 18px}
-  .option strong{font-size:16px;line-height:1.45}
-  .option span{font-size:13px;line-height:1.55}
-  .result-head h2{font-size:25px;line-height:1.4}
-  .result-head p,.recommend-box p,.reason div,.result-confidence{font-size:13px;line-height:1.75}
-  .recommend-box h3{font-size:22px;line-height:1.4}
-  .match-note{font-size:12px!important;line-height:1.6!important}
-  .seo-info>p,.seo-grid p,.guide p,.faq-section>p{font-size:14px;line-height:1.8}
-  .seo-grid h3,.guide-grid a{font-size:14px}
-  .faq-item summary{font-size:14px;line-height:1.55}
-  .faq-item p{font-size:14px;line-height:1.8}
-}
-</style>
-
-<style>
-/* MINGKA_RESULT_TRUST_FIX_V1 */
-/* 결과 화면의 무료진단/4문항/비교 3개 항목을 독립 카드로 분리합니다. */
-.result-trust{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-  margin-top:16px;
-}
-.result-trust span{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  min-height:78px;
-  padding:12px 8px;
-  border:1px solid #eeeaf5;
-  border-radius:16px;
-  background:#faf9ff;
-  color:#777;
-  text-align:center;
-  font-size:11px;
-  line-height:1.45;
-}
-.result-trust span b{
-  display:block;
-  margin-bottom:4px;
-  color:#7567e8;
-  font-size:14px;
-  font-weight:900;
-}
-@media (max-width:767px){
-  .result-trust{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:7px;
-    margin-top:14px;
-  }
-  .result-trust span{
-    min-height:72px;
-    padding:10px 5px;
-    border-radius:14px;
-    font-size:10px;
-    line-height:1.4;
-    word-break:keep-all;
-  }
-  .result-trust span b{
-    margin-bottom:3px;
-    font-size:13px;
-  }
-}
-@media (min-width:768px){
-  .result-trust span{
-    min-height:84px;
-    font-size:12px;
-  }
-  .result-trust span b{
-    font-size:15px;
-  }
-}
-</style>
-
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"밍카","url":"https://mingka.tcflick.com/","description":"차량 구매 전 장기렌트와 리스 등 차량 이용 방법을 비교해볼 수 있는 간단한 체크 서비스"}</script>
+</body>
+</html>
