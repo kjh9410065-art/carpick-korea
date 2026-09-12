@@ -45,6 +45,14 @@ export default {
       html = html.replace(/<head>/i, `<head>\n${canonicalTag}`);
     }
 
+    // 내가 사용하는 브라우저만 GA4에서 제외할 수 있도록 내부 방문 플래그를 지원합니다.
+    // 최초 1회 /?internal=1 로 접속하면 localStorage에 플래그가 저장되고,
+    // 이후 이 브라우저에서는 GA4 페이지뷰 전송을 실행하지 않습니다.
+    html = html.replace(/gtag\(['"]config['"],\s*['"]G-06DTYM04S2['"]\);/i,
+      `if (localStorage.getItem("mingka_internal") !== "1") { gtag("config", "G-06DTYM04S2"); }`);
+    html = html.replace(/<head>/i,
+      `<head>\n<script>if(new URLSearchParams(location.search).get("internal")==="1"){localStorage.setItem("mingka_internal","1");}</script>`);
+
     // 광고는 상단 1개, 설문조사 바로 아래 1개, 하단 1개로 분산합니다.
     const adStyle = `
 <style>
